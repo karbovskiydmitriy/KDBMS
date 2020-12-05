@@ -15,24 +15,30 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Manager.cpp">
-      <Filter>Source code files</Filter>
-    </ClCompile>
-    <ClCompile Include="Table.cpp">
-      <Filter>Source code files</Filter>
-    </ClCompile>
     <ClCompile Include="SQL.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+    <ClCompile Include="IO.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+    <ClCompile Include="KDBMS.cpp">
       <Filter>Source code files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Manager.hpp">
-      <Filter>Header files</Filter>
-    </ClInclude>
-    <ClInclude Include="Table.hpp">
-      <Filter>Header files</Filter>
-    </ClInclude>
     <ClInclude Include="SQL.hpp">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="Types.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.h">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="IO.hpp">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="KDBMS.hpp">
       <Filter>Header files</Filter>
     </ClInclude>
   </ItemGroup>
