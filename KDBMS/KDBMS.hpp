@@ -10,10 +10,13 @@
 #include <vector>
 
 #include "Database.hpp"
+#include "Interfaces.hpp"
+#include "Serialization.hpp"
+#include "Query.hpp"
 
 using namespace std;
 
-struct DllExport Manager
+struct DllExport Manager : Serializeable
 {
 	String name;
 
@@ -25,6 +28,9 @@ struct DllExport Manager
 	Response Use(Database *database);
 	Response DropDatabase(String name);
 	Response DropDatabase(Database *database);
+
+	SerializedObject Serialize() override;
+	bool Deserialize(char *rows) override;
 
 private:
 	list<Database *> databases;

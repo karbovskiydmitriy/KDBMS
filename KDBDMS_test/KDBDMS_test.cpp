@@ -4,7 +4,7 @@ int __cdecl main()
 {
 	SetupTests();
 
-	system("pause");
+	// system("pause");
 
 	return 0;
 }
@@ -18,7 +18,7 @@ void SetupTests()
 
 	manager = new Manager(TEXT("Test session"));
 
-	print(TEXT("Opening %s\n"), TEXT("My test database #1"));
+	cout << TEXT("Opening ") << TEXT("My test database #1") << endl;
 
 	r = manager->CreateDatabase(TEXT("My test database #1"));
 	r = manager->CreateDatabase(TEXT("My test database #2"));
@@ -27,15 +27,16 @@ void SetupTests()
 	r = manager->Use(TEXT("My test database #1"));
 	db = (Database *)r.data;
 
-	print(TEXT("Used %s\n"), db->name.c_str());
+	cout << TEXT("Used ") << db->name << endl;
 
-	r = db->CreateTable(TEXT("My test table #1"), nullptr);
-	r = db->CreateTable(TEXT("My test table #2"), nullptr);
-	r = db->CreateTable(TEXT("My test table #3"), nullptr);
-	r = db->CreateTable(TEXT("My test table #4"), nullptr);
+	vector<TableColumn> *columns = new vector<TableColumn>();
+	columns->push_back(TableColumn(String(TEXT("id")), Type::LONG));
+	columns->push_back(TableColumn(String(TEXT("name")), Type::STRING));
+	columns->push_back(TableColumn(String(TEXT("age")), Type::SHORT));
+	columns->push_back(TableColumn(String(TEXT("gender")), Type::ENUM));
+	r = db->CreateTable(TEXT("Persons"), columns);
 
 	table = (Table *)r.data;
-	cout << table->name << endl;
 
 	manager->DropDatabase(TEXT("My test database #1"));
 }

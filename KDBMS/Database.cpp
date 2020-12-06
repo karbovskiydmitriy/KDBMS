@@ -1,46 +1,75 @@
 #include "Database.hpp"
 
-Response::Response()
+Data::Data(Type type, Pointer data)
 {
-	this->errorCode = ErrorCode::OK;
-	this->data = null;
+	if ((uint32_t)type | (uint32_t)Type::ARRAY)
+	{
+		pointer = data;
+	}
+	else
+	{
+		switch (type)
+		{
+		case Type::BOOL:
+			value = *(bool *)data;
+			break;
+		case Type::CHAR:
+			value = *(char *)data;
+			break;
+		case Type::SHORT:
+			value = *(signed short int *)data;
+			break;
+		case Type::USHORT:
+			value = *(unsigned short int *)data;
+			break;
+		case Type::INT:
+			value = *(signed long int *)data;
+			break;
+		case Type::UINT:
+			value = *(unsigned long int *)data;
+			break;
+		case Type::LONG:
+			value = *(signed long long int *)data;
+			break;
+		case Type::ULONG:
+			value = *(long unsigned long int *)data;
+			break;
+		case Type::FLOAT:
+			singlePrecisionFloating = *(float *)data;
+			break;
+		case Type::DOUBLE:
+			doublePrecisionFloating = *(double *)data;
+			break;
+		case Type::STRING:
+			pointer = (String *)data;
+			break;
+		case Type::ENUM:
+			pointer = (Enum *)data;
+			break;
+		case Type::DATE:
+			pointer = (Date *)data;
+			break;
+		case Type::TIME:
+			pointer = (Time *)data;
+			break;
+		case Type::DATETIME:
+			pointer = (DateTime *)data;
+			break;
+		case Type::BLOB:
+			pointer = (Blob *)data;
+			break;
+		default:
+			value = 0;
+			break;
+		}
+	}
 }
 
-Response::Response(ErrorCode errorCode, Pointer data)
+Attributes::Attributes(bool nonNull, bool primaryKey, bool foreignKey)
 {
-	this->errorCode = errorCode;
-	this->data = data;
-}
-
-SerializedObject::SerializedObject()
-{
-	this->type = ObjectType::NONE;
-	this->primitiveType = Type::NONE;
-	this->length = 0;
-	this->data = null;
-}
-
-SerializedObject::SerializedObject(ObjectType type, uint64_t length, Pointer data)
-{
-	this->type = type;
-	this->primitiveType = Type::NONE;
-	this->length = length;
-	this->data = data;
-}
-
-SerializedObject::SerializedObject(Type primitiveType, uint64_t length, Pointer data)
-{
-	this->type = ObjectType::PRIMITIVE;
-	this->primitiveType = primitiveType;
-	this->length = length;
-	this->data = data;
-}
-
-Attributes::Attributes()
-{
-	this->nonNull = 0;
-	this->primaryKey = 0;
-	this->foreignKey = 0;
+	this->nonNull = nonNull;
+	this->primaryKey = primaryKey;
+	this->foreignKey = foreignKey;
 }
 
 TableColumn::TableColumn(String name, Type type, Attributes attributes)
@@ -79,32 +108,60 @@ Table::Table(String name, vector<TableColumn> *columns)
 {
 	this->name = name;
 	this->columns = columns;
-	// this->rows.resize(128);
 }
 
-Response Table::Insert(vector<Data> *row)
+Response Table::Insert(TableRow *row)
 {
 	if (row != nullptr)
 	{
-		return Response(ErrorCode::NOT_IMPLEMENTED);
+		this->rows.push_back(row);
+
+		return Response(ErrorCode::OK);
 	}
 
 	return Response(ErrorCode::NULL_ARGUMENT);
 }
 
-Response Table::Select()
+Response Table::Select(Condition *condition)
+{
+	if (condition != nullptr)
+	{
+		vector<TableRow *> *entries = new vector<TableRow *>();
+
+		for (const auto &iterator : this->rows)
+		{
+			// TODO
+
+			if (true)
+			{
+				entries->push_back(iterator);
+			}
+		}
+
+		return Response(ErrorCode::OK, entries);
+	}
+
+	return Response(ErrorCode::NULL_ARGUMENT);
+}
+
+Response Table::Update() // TODO
 {
 	return Response(ErrorCode::NOT_IMPLEMENTED);
 }
 
-Response Table::Update()
+Response Table::Delete(Condition *condition)
 {
-	return Response(ErrorCode::NOT_IMPLEMENTED);
-}
+	if (condition != nullptr)
+	{
+		for (const auto &iterator : this->rows)
+		{
+			// TODO
+		}
 
-Response Table::Delete()
-{
-	return Response(ErrorCode::NOT_IMPLEMENTED);
+		return Response(ErrorCode::NOT_IMPLEMENTED);
+	}
+
+	return Response(ErrorCode::NULL_ARGUMENT);
 }
 
 SerializedObject Table::Serialize()
@@ -114,6 +171,24 @@ SerializedObject Table::Serialize()
 
 bool Table::Deserialize(char *rows)
 {
+	return false;
+}
+
+bool Table::DeleteRow(TableRow *row)
+{
+	if (row != nullptr)
+	{
+		for (const auto &iterator : this->rows)
+		{
+			if (iterator == row)
+			{
+				this->rows.remove(row);
+
+				return true;
+			}
+		}
+	}
+
 	return false;
 }
 
@@ -146,31 +221,6 @@ Response Database::AlterTable(String name, vector<TableColumn> *columns)
 
 	return Response(ErrorCode::OK, table);
 }
-
-/*Response Database::AlterTable_Modify(String name, TableColumn column)
-{
-	return Response(ErrorCode::NOT_IMPLEMENTED);
-}
-
-Response Database::AlterTable_DropColumn(String name)
-{
-	return Response(ErrorCode::NOT_IMPLEMENTED);
-}
-
-Response Database::AlterTable_RenameTo(String name, String newName)
-{
-	return Response(ErrorCode::NOT_IMPLEMENTED);
-}
-
-Response Database::AlterTable_Enable(String name, String attribute)
-{
-	return Response(ErrorCode::NOT_IMPLEMENTED);
-}
-
-Response Database::AlterTable_Disable(String name, String attribute)
-{
-	return Response(ErrorCode::NOT_IMPLEMENTED);
-}*/
 
 Response Database::DropTable(String name)
 {

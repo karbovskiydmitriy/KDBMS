@@ -11,7 +11,7 @@
 #include <iostream>
 #include <filesystem>
 
-#include "Types.h"
+#include "Types.hpp"
 
 using namespace std;
 using namespace std::filesystem;

@@ -8,10 +8,21 @@
 #include <vector>
 #include <array>
 #include <string>
+#include <list>
+#include <fstream>
+#include <filesystem>
+#include <iostream>
 
 #include "KDBMS.hpp"
 #include "Database.hpp"
 #include "IO.hpp"
-#include "Types.h"
+#include "Interfaces.hpp"
+#include "Query.hpp"
+#include "Serialization.hpp"
+#include "Table.hpp"
+#include "Types.hpp"
+
+using namespace std;
+using namespace std::filesystem;
 
 #endif // __EXPORT_HPP__

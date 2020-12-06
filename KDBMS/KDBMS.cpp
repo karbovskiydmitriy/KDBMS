@@ -79,8 +79,31 @@ Response Manager::DropDatabase(Database *database)
 			return Response(ErrorCode::NOT_FOUND);
 		}
 	}
+	else
+	{
+		if (this->currentDatabase != nullptr)
+		{
+			delete currentDatabase;
 
-	return Response(ErrorCode::NULL_ARGUMENT);
+			currentDatabase = nullptr;
+
+			return Response(ErrorCode::OK);
+		}
+		else
+		{
+			return Response(ErrorCode::NULL_ARGUMENT);
+		}
+	}
+}
+
+SerializedObject Manager::Serialize()
+{
+	return SerializedObject();
+}
+
+bool Manager::Deserialize(char *rows)
+{
+	return false;
 }
 
 Database *Manager::FindDatabaseByName(String name)

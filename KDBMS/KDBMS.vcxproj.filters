@@ -20,11 +20,17 @@
     <ClCompile Include="Database.cpp">
       <Filter>Source code files</Filter>
     </ClCompile>
+    <ClCompile Include="Table.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+    <ClCompile Include="Serialization.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+    <ClCompile Include="Query.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Types.h">
-      <Filter>Header files</Filter>
-    </ClInclude>
     <ClInclude Include="Config.h">
       <Filter>Header files</Filter>
     </ClInclude>
@@ -40,5 +46,22 @@
     <ClInclude Include="Database.hpp">
       <Filter>Header files</Filter>
     </ClInclude>
+    <ClInclude Include="Table.hpp">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="Serialization.hpp">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="Types.hpp">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="Query.hpp">
+      <Filter>Header files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Interfaces.hpp">
+      <Filter>Header files</Filter>
+    </None>
   </ItemGroup>
 </Project>
