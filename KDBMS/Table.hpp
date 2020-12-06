@@ -91,7 +91,7 @@ struct DllExport TableRow : Serializeable
 	bool Deserialize(char *rows) override;
 };
 
-struct DllExport Table : Serializeable
+struct DllExport Table : Serializeable, Printable
 {
 	String name;
 	vector<TableColumn> *columns;
@@ -106,6 +106,7 @@ struct DllExport Table : Serializeable
 
 	SerializedObject Serialize() override;
 	bool Deserialize(char *rows) override;
+	String ToString() override;
 
 private:
 	bool DeleteRow(TableRow *row);
