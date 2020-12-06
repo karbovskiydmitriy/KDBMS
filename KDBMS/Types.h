@@ -5,8 +5,9 @@
 
 #include "Config.h"
 
-#define Pointer void *
-#define null ((Pointer)0)
+typedef void *Pointer;
+
+constexpr Pointer null = (Pointer)0;
 
 // typedef unsigned char byte;
 

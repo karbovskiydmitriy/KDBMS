@@ -16,6 +16,8 @@
 using namespace std;
 using namespace std::filesystem;
 
-// byte *ReadFile(string name);
+char *ReadFromFile(String name);
+void WriteToFile(String name, char *data);
+vector<directory_entry> EnumerateFiles(String directory);
 
 #endif // __IO_HPP__

@@ -5,23 +5,35 @@
 
 #include "Config.h"
 
+#include <Windows.h>
 #include <string>
 #include <vector>
 
-#include "SQL.hpp"
+#include "Database.hpp"
 
 using namespace std;
 
-struct Manager
+struct DllExport Manager
 {
-	Database *CreateDatabase(String name);
-	Database *Use(String name);
-	Database *Use(Database database);
-	SQLResponse *DropDatabase(String name);
-	SQLResponse *DropDatabase(Database database);
+	String name;
+
+	Manager(String name);
+	~Manager();
+
+	Response CreateDatabase(String name);
+	Response Use(String name);
+	Response Use(Database *database);
+	Response DropDatabase(String name);
+	Response DropDatabase(Database *database);
+
+private:
+	list<Database *> databases;
+	Database *currentDatabase = nullptr;
+
+	Database *FindDatabaseByName(String name);
+	bool DeleteDatabase(Database *database);
 };
 
-void main();
-void SetupTests();
+// int main();
 
 #endif // __KDBMS_HPP__

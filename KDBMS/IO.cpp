@@ -20,11 +20,11 @@
 
 char *ReadFromFile(String name)
 {
-	std::ifstream file(name, std::ios::binary | std::ios::ate);
-	std::streamsize size = file.tellg();
-	file.seekg(0, std::ios::beg);
+	ifstream file(name, ios::binary | ios::ate);
+	streamsize size = file.tellg();
+	file.seekg(0, ios::beg);
 
-	std::vector<char> buffer(size);
+	vector<char> buffer((unsigned int)size);
 	if (file.read(buffer.data(), size))
 	{
 		return buffer.data();
@@ -35,12 +35,12 @@ char *ReadFromFile(String name)
 
 void WriteToFile(String name, char *data)
 {
-	std::ofstream file(name, std::ios::binary);
+	ofstream file(name, ios::binary);
 	file.write(data, 100);
 	file.close();
 }
 
-vector<directory_entry> EnumerateFile(String directory)
+vector<directory_entry> EnumerateFiles(String directory)
 {
 	vector<directory_entry> result;
 

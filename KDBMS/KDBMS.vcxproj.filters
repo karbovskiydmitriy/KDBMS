@@ -9,26 +9,19 @@
       <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
       <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
     </Filter>
-    <Filter Include="Resource files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SQL.cpp">
-      <Filter>Source code files</Filter>
-    </ClCompile>
     <ClCompile Include="IO.cpp">
       <Filter>Source code files</Filter>
     </ClCompile>
     <ClCompile Include="KDBMS.cpp">
       <Filter>Source code files</Filter>
     </ClCompile>
+    <ClCompile Include="Database.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="SQL.hpp">
-      <Filter>Header files</Filter>
-    </ClInclude>
     <ClInclude Include="Types.h">
       <Filter>Header files</Filter>
     </ClInclude>
@@ -39,6 +32,12 @@
       <Filter>Header files</Filter>
     </ClInclude>
     <ClInclude Include="KDBMS.hpp">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="Export.hpp">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="Database.hpp">
       <Filter>Header files</Filter>
     </ClInclude>
   </ItemGroup>
