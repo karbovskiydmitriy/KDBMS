@@ -17,7 +17,7 @@ using namespace std;
 using namespace std::filesystem;
 
 char *ReadFromFile(String name);
-void WriteToFile(String name, char *data);
+void WriteToFile(String name, char *rows);
 vector<directory_entry> EnumerateFiles(String directory);
 
 #endif // __IO_HPP__

@@ -14,23 +14,28 @@ void SetupTests()
 	Response r;
 	Manager *manager;
 	Database *db;
+	Table *table;
 
 	manager = new Manager(TEXT("Test session"));
-	String myDatabaseName = String(TEXT("My test database"));
 
-	print(TEXT("Opening %s\n"), myDatabaseName.c_str());
+	print(TEXT("Opening %s\n"), TEXT("My test database #1"));
 
-	manager->CreateDatabase(myDatabaseName);
-	manager->CreateDatabase(TEXT("123"));
-	manager->CreateDatabase(TEXT("ABC"));
+	r = manager->CreateDatabase(TEXT("My test database #1"));
+	r = manager->CreateDatabase(TEXT("My test database #2"));
+	r = manager->CreateDatabase(TEXT("My test database #3"));
 
-	r = manager->Use(myDatabaseName);
-
+	r = manager->Use(TEXT("My test database #1"));
 	db = (Database *)r.data;
 
 	print(TEXT("Used %s\n"), db->name.c_str());
 
-	db->CreateTable(TEXT("My test table"), nullptr);
+	r = db->CreateTable(TEXT("My test table #1"), nullptr);
+	r = db->CreateTable(TEXT("My test table #2"), nullptr);
+	r = db->CreateTable(TEXT("My test table #3"), nullptr);
+	r = db->CreateTable(TEXT("My test table #4"), nullptr);
 
-	manager->DropDatabase(myDatabaseName);
+	table = (Table *)r.data;
+	cout << table->name << endl;
+
+	manager->DropDatabase(TEXT("My test database #1"));
 }

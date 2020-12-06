@@ -21,7 +21,7 @@ Response Manager::CreateDatabase(String name)
 {
 	Database *database = new Database(name);
 
-	this->databases.push_back(database);
+	databases.push_back(database);
 
 	return Response(ErrorCode::OK, database);
 }
@@ -42,9 +42,14 @@ Response Manager::Use(String name)
 
 Response Manager::Use(Database *database)
 {
-	currentDatabase = database;
+	if (database != nullptr)
+	{
+		currentDatabase = database;
 
-	return Response(ErrorCode::OK, currentDatabase);
+		return Response(ErrorCode::OK, currentDatabase);
+	}
+
+	return Response(ErrorCode::NULL_ARGUMENT);
 }
 
 Response Manager::DropDatabase(String name)
@@ -63,14 +68,19 @@ Response Manager::DropDatabase(String name)
 
 Response Manager::DropDatabase(Database *database)
 {
-	if (DeleteDatabase(database))
+	if (database != nullptr)
 	{
-		return Response(ErrorCode::OK);
+		if (DeleteDatabase(database))
+		{
+			return Response(ErrorCode::OK);
+		}
+		else
+		{
+			return Response(ErrorCode::NOT_FOUND);
+		}
 	}
-	else
-	{
-		return Response(ErrorCode::NOT_FOUND);
-	}
+
+	return Response(ErrorCode::NULL_ARGUMENT);
 }
 
 Database *Manager::FindDatabaseByName(String name)
@@ -88,14 +98,17 @@ Database *Manager::FindDatabaseByName(String name)
 
 bool Manager::DeleteDatabase(Database *database)
 {
-	for (const auto &iterator : databases)
+	if (database != nullptr)
 	{
-		if (iterator == database)
+		for (const auto &iterator : databases)
 		{
-			databases.remove(database);
-			delete database;
+			if (iterator == database)
+			{
+				databases.remove(database);
+				delete database;
 
-			return true;
+				return true;
+			}
 		}
 	}
 

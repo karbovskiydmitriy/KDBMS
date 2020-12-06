@@ -33,10 +33,10 @@ char *ReadFromFile(String name)
 	return nullptr;
 }
 
-void WriteToFile(String name, char *data)
+void WriteToFile(String name, char *rows)
 {
 	ofstream file(name, ios::binary);
-	file.write(data, 100);
+	file.write(rows, 100);
 	file.close();
 }
 
@@ -50,4 +50,4 @@ vector<directory_entry> EnumerateFiles(String directory)
 	}
 
 	return result;
-}	
+}

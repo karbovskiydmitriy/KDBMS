@@ -2,8 +2,8 @@
 
 Response::Response()
 {
-	errorCode = ErrorCode::OK;
-	data = null;
+	this->errorCode = ErrorCode::OK;
+	this->data = null;
 }
 
 Response::Response(ErrorCode errorCode, Pointer data)
@@ -14,17 +14,33 @@ Response::Response(ErrorCode errorCode, Pointer data)
 
 SerializedObject::SerializedObject()
 {
-	type = ObjectType::NONE;
-	primitiveType = Type::NONE;
-	length = 0;
-	object = null;
+	this->type = ObjectType::NONE;
+	this->primitiveType = Type::NONE;
+	this->length = 0;
+	this->data = null;
+}
+
+SerializedObject::SerializedObject(ObjectType type, uint64_t length, Pointer data)
+{
+	this->type = type;
+	this->primitiveType = Type::NONE;
+	this->length = length;
+	this->data = data;
+}
+
+SerializedObject::SerializedObject(Type primitiveType, uint64_t length, Pointer data)
+{
+	this->type = ObjectType::PRIMITIVE;
+	this->primitiveType = primitiveType;
+	this->length = length;
+	this->data = data;
 }
 
 Attributes::Attributes()
 {
-	nonNull = 0;
-	primaryKey = 0;
-	foreignKey = 0;
+	this->nonNull = 0;
+	this->primaryKey = 0;
+	this->foreignKey = 0;
 }
 
 TableColumn::TableColumn(String name, Type type, Attributes attributes)
@@ -39,9 +55,14 @@ SerializedObject TableColumn::Serialize()
 	return SerializedObject();
 }
 
-bool TableColumn::Deserialize(char *data)
+bool TableColumn::Deserialize(char *rows)
 {
 	return false;
+}
+
+TableRow::TableRow(vector<Data> fields)
+{
+	this->fields = fields;
 }
 
 SerializedObject TableRow::Serialize()
@@ -49,7 +70,7 @@ SerializedObject TableRow::Serialize()
 	return SerializedObject();
 }
 
-bool TableRow::Deserialize(char *data)
+bool TableRow::Deserialize(char *rows)
 {
 	return false;
 }
@@ -58,6 +79,32 @@ Table::Table(String name, vector<TableColumn> *columns)
 {
 	this->name = name;
 	this->columns = columns;
+	// this->rows.resize(128);
+}
+
+Response Table::Insert(vector<Data> *row)
+{
+	if (row != nullptr)
+	{
+		return Response(ErrorCode::NOT_IMPLEMENTED);
+	}
+
+	return Response(ErrorCode::NULL_ARGUMENT);
+}
+
+Response Table::Select()
+{
+	return Response(ErrorCode::NOT_IMPLEMENTED);
+}
+
+Response Table::Update()
+{
+	return Response(ErrorCode::NOT_IMPLEMENTED);
+}
+
+Response Table::Delete()
+{
+	return Response(ErrorCode::NOT_IMPLEMENTED);
 }
 
 SerializedObject Table::Serialize()
@@ -65,7 +112,7 @@ SerializedObject Table::Serialize()
 	return SerializedObject();
 }
 
-bool Table::Deserialize(char *data)
+bool Table::Deserialize(char *rows)
 {
 	return false;
 }
@@ -73,22 +120,27 @@ bool Table::Deserialize(char *data)
 Database::Database(String name, list<Table *> *tables)
 {
 	this->name = name;
+
 	if (tables != nullptr)
 	{
-		this->tables = *tables;
+		this->tables = tables;
+	}
+	else
+	{
+		this->tables = new list<Table *>();
 	}
 }
 
 Response Database::CreateTable(String name, vector<TableColumn> *columns)
 {
 	Table *table = new Table(name, columns);
+	this->tables->push_back(table);
 
 	return Response(ErrorCode::OK, table);
 }
 
 Response Database::AlterTable(String name, vector<TableColumn> *columns)
 {
-	// Table *table = nullptr;// = new Table(name, columns);
 	Table *table = FindTableByName(name);
 	table->columns = columns;
 
@@ -123,7 +175,7 @@ Response Database::AlterTable_Disable(String name, String attribute)
 Response Database::DropTable(String name)
 {
 	Table *table = FindTableByName(name);
-	
+
 	if (table != nullptr)
 	{
 		if (DeleteTable(table))
@@ -135,39 +187,19 @@ Response Database::DropTable(String name)
 	return Response(ErrorCode::NOT_FOUND);
 }
 
-Response Database::Insert()
-{
-	return Response(ErrorCode::NOT_IMPLEMENTED);
-}
-
-Response Database::Select()
-{
-	return Response(ErrorCode::NOT_IMPLEMENTED);
-}
-
-Response Database::Update()
-{
-	return Response(ErrorCode::NOT_IMPLEMENTED);
-}
-
-Response Database::Delete()
-{
-	return Response(ErrorCode::NOT_IMPLEMENTED);
-}
-
 SerializedObject Database::Serialize()
 {
 	return SerializedObject();
 }
 
-bool Database::Deserialize(char *data)
+bool Database::Deserialize(char *rows)
 {
 	return false;
 }
 
 Table *Database::FindTableByName(String name)
 {
-	for (const auto &iterator : tables)
+	for (const auto &iterator : *this->tables)
 	{
 		if (iterator->name == name)
 		{
@@ -180,11 +212,11 @@ Table *Database::FindTableByName(String name)
 
 bool Database::DeleteTable(Table *table)
 {
-	for (const auto &iterator : tables)
+	for (const auto &iterator : *this->tables)
 	{
 		if (iterator == table)
 		{
-			tables.remove(table);
+			this->tables->remove(table);
 			delete table;
 
 			return true;
