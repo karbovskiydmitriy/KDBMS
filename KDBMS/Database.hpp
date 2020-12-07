@@ -17,12 +17,6 @@
 
 using namespace std;
 
-enum struct DllExport ErrorCode;
-enum struct DllExport ObjectType;
-struct DllExport Response;
-struct DllExport Condition;
-struct DllExport Database;
-
 struct DllExport Database : Serializeable
 {
 	String name;

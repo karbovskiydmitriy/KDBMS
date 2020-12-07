@@ -1,84 +1,5 @@
 #include "Database.hpp"
 
-Data::Data(Type type, Pointer data)
-{
-	if ((uint32_t)type | (uint32_t)Type::ARRAY)
-	{
-		pointer = data;
-	}
-	else
-	{
-		switch (type)
-		{
-		case Type::BOOL:
-			value = *(bool *)data;
-			break;
-		case Type::CHAR:
-			value = *(char *)data;
-			break;
-		case Type::SHORT:
-			value = *(signed short int *)data;
-			break;
-		case Type::USHORT:
-			value = *(unsigned short int *)data;
-			break;
-		case Type::INT:
-			value = *(signed long int *)data;
-			break;
-		case Type::UINT:
-			value = *(unsigned long int *)data;
-			break;
-		case Type::LONG:
-			value = *(signed long long int *)data;
-			break;
-		case Type::ULONG:
-			value = *(long unsigned long int *)data;
-			break;
-		case Type::FLOAT:
-			singlePrecisionFloating = *(float *)data;
-			break;
-		case Type::DOUBLE:
-			doublePrecisionFloating = *(double *)data;
-			break;
-		case Type::STRING:
-			pointer = (String *)data;
-			break;
-		case Type::ENUM:
-			pointer = (Enum *)data;
-			break;
-		case Type::DATE:
-			pointer = (Date *)data;
-			break;
-		case Type::TIME:
-			pointer = (Time *)data;
-			break;
-		case Type::DATETIME:
-			pointer = (DateTime *)data;
-			break;
-		case Type::BLOB:
-			pointer = (Blob *)data;
-			break;
-		default:
-			value = 0;
-			break;
-		}
-	}
-}
-
-Attributes::Attributes(bool nonNull, bool primaryKey, bool foreignKey)
-{
-	this->nonNull = nonNull;
-	this->primaryKey = primaryKey;
-	this->foreignKey = foreignKey;
-}
-
-TableColumn::TableColumn(String name, Type type, Attributes attributes)
-{
-	this->name = name;
-	this->type = type;
-	this->attributes = attributes;
-}
-
 Database::Database(String name, list<Table *> *tables)
 {
 	this->name = name;
@@ -161,9 +82,4 @@ bool Database::DeleteTable(Table *table)
 	}
 
 	return false;
-}
-
-String Table::ToString()
-{
-	return String();
 }

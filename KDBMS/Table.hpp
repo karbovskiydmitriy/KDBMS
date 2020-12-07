@@ -13,52 +13,9 @@
 #include "Interfaces.hpp"
 #include "Serialization.hpp"
 #include "Query.hpp"
+#include "Data.hpp"
 
 using namespace std;
-
-struct DllExport Enum;
-struct DllExport Date;
-struct DllExport Time;
-struct DllExport DateTime;
-union DllExport Data;
-struct DllExport Attributes;
-struct DllExport TableColumn;
-struct DllExport TableRow;
-struct DllExport Table;
-
-typedef vector<char> Blob;
-
-struct DllExport Enum
-{
-	String value;
-	list<String> values;
-};
-
-struct DllExport Date
-{
-	// TODO
-};
-
-struct DllExport Time
-{
-	// TODO
-};
-
-struct DllExport DateTime
-{
-	Date date;
-	Time time;
-};
-
-union DllExport Data
-{
-	Pointer pointer;
-	uint64_t value;
-	float singlePrecisionFloating;
-	double doublePrecisionFloating;
-
-	Data(Type type, Pointer data);
-};
 
 struct DllExport Attributes
 {
@@ -81,14 +38,16 @@ struct DllExport TableColumn : Serializeable
 	bool Deserialize(char *rows) override;
 };
 
-struct DllExport TableRow : Serializeable
+struct DllExport TableRow : Serializeable, Printable
 {
+	vector<TableColumn> *columns;
 	vector<Data> fields;
 
-	TableRow(vector<Data> fields);
+	TableRow(vector<TableColumn> *columns, vector<Data> fields);
 
 	SerializedObject Serialize() override;
 	bool Deserialize(char *rows) override;
+	String ToString() override;
 };
 
 struct DllExport Table : Serializeable, Printable

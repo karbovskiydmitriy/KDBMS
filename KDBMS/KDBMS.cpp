@@ -10,6 +10,8 @@
 Manager::Manager(String name)
 {
 	this->name = name;
+
+	cout << "Starting KDBMS..." << endl;
 }
 
 Manager::~Manager()
@@ -94,6 +96,13 @@ Response Manager::DropDatabase(Database *database)
 			return Response(ErrorCode::NULL_ARGUMENT);
 		}
 	}
+}
+
+void Manager::EnableLoggning(bool logging)
+{
+	this->logging = logging;
+
+	cout << (logging ? TEXT("Logging enabled") : TEXT("Logging disabled")) << endl;
 }
 
 SerializedObject Manager::Serialize()

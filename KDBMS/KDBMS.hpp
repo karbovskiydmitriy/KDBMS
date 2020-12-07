@@ -5,9 +5,9 @@
 
 #include "Config.h"
 
-#include <Windows.h>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "Database.hpp"
 #include "Interfaces.hpp"
@@ -28,11 +28,13 @@ struct DllExport Manager : Serializeable
 	Response Use(Database *database);
 	Response DropDatabase(String name);
 	Response DropDatabase(Database *database);
+	void EnableLoggning(bool logging);
 
 	SerializedObject Serialize() override;
 	bool Deserialize(char *rows) override;
 
 private:
+	bool logging = false;
 	list<Database *> databases;
 	Database *currentDatabase = nullptr;
 

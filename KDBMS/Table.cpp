@@ -1,5 +1,19 @@
 #include "Table.hpp"
 
+Attributes::Attributes(bool nonNull, bool primaryKey, bool foreignKey)
+{
+	this->nonNull = nonNull;
+	this->primaryKey = primaryKey;
+	this->foreignKey = foreignKey;
+}
+
+TableColumn::TableColumn(String name, Type type, Attributes attributes)
+{
+	this->name = name;
+	this->type = type;
+	this->attributes = attributes;
+}
+
 SerializedObject TableColumn::Serialize()
 {
 	return SerializedObject();
@@ -10,8 +24,9 @@ bool TableColumn::Deserialize(char *rows)
 	return false;
 }
 
-TableRow::TableRow(vector<Data> fields)
+TableRow::TableRow(vector<TableColumn> *columns, vector<Data> fields)
 {
+	this->columns = columns;
 	this->fields = fields;
 }
 
@@ -23,6 +38,62 @@ SerializedObject TableRow::Serialize()
 bool TableRow::Deserialize(char *rows)
 {
 	return false;
+}
+
+String TableRow::ToString()
+{
+	String result = "Values: ";
+	int i = 0;
+
+	for (const auto &iterator : this->fields)
+	{
+		String value;
+
+		switch (this->columns->data()[i++].type)
+		{
+		case Type::BOOL:
+			value = String(iterator.value ? "true" : "false");
+			break;
+		case Type::CHAR:
+			value = String((const char *)&iterator.value);
+			break;
+		case Type::BYTE:
+		case Type::SHORT:
+		case Type::INT:
+		case Type::LONG:
+			value = To_String((long long)iterator.value);
+			break;
+		case Type::UBYTE:
+		case Type::USHORT:
+		case Type::UINT:
+		case Type::ULONG:
+			value = To_String((unsigned long long)iterator.value);
+			break;
+		case Type::FLOAT:
+			value = To_String((float)iterator.value);
+			break;
+		case Type::DOUBLE:
+			value = To_String((double)iterator.value);
+			break;
+		case Type::STRING:
+			value = *(String *)iterator.pointer;
+			break;
+		case Type::ENUM:
+		case Type::DATE:
+		case Type::TIME:
+		case Type::DATETIME:
+		case Type::BLOB:
+			value = String("Complex type");
+			break;
+		default:
+			value = String("unknown");
+			break;
+		}
+
+		result += "\t" + value; // TODO !!!
+	}
+
+	return result;
 }
 
 Table::Table(String name, vector<TableColumn> *columns)
@@ -61,8 +132,17 @@ Response Table::Select(Condition *condition)
 
 		return Response(ErrorCode::OK, entries);
 	}
+	else
+	{
+		vector<TableRow *> *entries = new vector<TableRow *>();
 
-	return Response(ErrorCode::NULL_ARGUMENT);
+		for (const auto &iterator : this->rows)
+		{
+			entries->push_back(iterator);
+		}
+
+		return Response(ErrorCode::OK, entries);
+	}
 }
 
 Response Table::Update() // TODO
@@ -93,6 +173,18 @@ SerializedObject Table::Serialize()
 bool Table::Deserialize(char *rows)
 {
 	return false;
+}
+
+String Table::ToString()
+{
+	String result = String(TEXT("Table\n")) + String(TEXT("Columns: "));
+
+	for (const auto &iterator : *this->columns)
+	{
+		result += "\t" + iterator.name;
+	}
+
+	return result;
 }
 
 bool Table::DeleteRow(TableRow *row)

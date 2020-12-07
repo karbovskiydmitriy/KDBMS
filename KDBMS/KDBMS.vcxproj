@@ -171,6 +171,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Data.cpp" />
     <ClCompile Include="IO.cpp" />
     <ClCompile Include="KDBMS.cpp" />
     <ClCompile Include="Database.cpp" />
@@ -180,6 +181,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h" />
+    <ClInclude Include="Data.hpp" />
     <ClInclude Include="Export.hpp" />
     <ClInclude Include="IO.hpp" />
     <ClInclude Include="KDBMS.hpp" />

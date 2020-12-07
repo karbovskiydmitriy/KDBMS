@@ -20,7 +20,6 @@
 #include "Query.hpp"
 #include "Serialization.hpp"
 #include "Table.hpp"
-#include "Types.hpp"
 
 using namespace std;
 using namespace std::filesystem;

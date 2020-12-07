@@ -29,6 +29,9 @@
     <ClCompile Include="Query.cpp">
       <Filter>Source code files</Filter>
     </ClCompile>
+    <ClCompile Include="Data.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Config.h">
@@ -56,6 +59,9 @@
       <Filter>Header files</Filter>
     </ClInclude>
     <ClInclude Include="Query.hpp">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="Data.hpp">
       <Filter>Header files</Filter>
     </ClInclude>
   </ItemGroup>

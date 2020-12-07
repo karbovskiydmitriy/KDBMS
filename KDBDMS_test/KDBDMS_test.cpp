@@ -4,8 +4,6 @@ int __cdecl main()
 {
 	SetupTests();
 
-	// system("pause");
-
 	return 0;
 }
 
@@ -21,22 +19,94 @@ void SetupTests()
 	cout << TEXT("Opening ") << TEXT("My test database #1") << endl;
 
 	r = manager->CreateDatabase(TEXT("My test database #1"));
-	r = manager->CreateDatabase(TEXT("My test database #2"));
-	r = manager->CreateDatabase(TEXT("My test database #3"));
 
 	r = manager->Use(TEXT("My test database #1"));
 	db = (Database *)r.data;
 
 	cout << TEXT("Used ") << db->name << endl;
 
-	vector<TableColumn> *columns = new vector<TableColumn>();
-	columns->push_back(TableColumn(String(TEXT("id")), Type::LONG));
-	columns->push_back(TableColumn(String(TEXT("name")), Type::STRING));
-	columns->push_back(TableColumn(String(TEXT("age")), Type::SHORT));
-	columns->push_back(TableColumn(String(TEXT("gender")), Type::ENUM));
-	r = db->CreateTable(TEXT("Persons"), columns);
+	vector<TableColumn> columns =
+	{
+		TableColumn(String(TEXT("id")), Type::LONG),
+		TableColumn(String(TEXT("name")), Type::STRING),
+		TableColumn(String(TEXT("age")), Type::USHORT)
+	};
+	r = db->CreateTable(TEXT("Persons"), &columns);
 
 	table = (Table *)r.data;
 
+	cout << endl << table->ToString() << endl;
+
+	int64_t id = 1;
+
+	r = table->Insert
+	(
+		new TableRow
+		(
+			table->columns,
+			{
+				Data(id++),
+				Data(new String("Dmitriy")),
+				Data((unsigned short)21)
+			}
+		)
+	);
+	r = table->Insert
+	(
+		new TableRow
+		(
+			table->columns,
+			{
+				Data(id++),
+				Data(new String("foo")),
+				Data((unsigned short)42)
+			}
+		)
+	);
+	r = table->Insert
+	(
+		new TableRow
+		(
+			table->columns,
+			{
+				Data(id++),
+				Data(new String("bar")),
+				Data((unsigned short)1337)
+			}
+		)
+	);
+
+	r = table->Update();
+
+	r = table->Select(
+		new Condition
+		(
+			String(TEXT("age")),
+			Data((unsigned short)18),
+			Type::USHORT,
+			Comparison::GREATER_OR_EQUALS_THAN
+		)
+	);
+	vector<TableRow *> *entries = (vector<TableRow *> *)r.data;
+
+	if (entries->size() != 0)
+	{
+		for (int i = 0; i < (int)entries->size(); i++)
+		{
+			cout << entries->data()[i]->ToString() << endl;
+		}
+	}
+	else
+	{
+		cout << "No entries!" << endl;
+	}
+
 	manager->DropDatabase(TEXT("My test database #1"));
+}
+
+bool Condition::Check(Data value)
+{
+	// TODO
+
+	return false;
 }
