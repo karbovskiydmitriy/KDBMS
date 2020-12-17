@@ -3,7 +3,7 @@
 #ifndef __TYPES_HPP__
 #define __TYPES_HPP__
 
-#include "Config.h"
+#include "Config.hpp"
 
 typedef void *Pointer;
 
@@ -70,6 +70,16 @@ enum struct DllExport Type : uint32_t
 	DATETIME = 1u << 16,
 	BLOB = 1u << 17,
 	ARRAY = 1u << 31
+};
+
+enum struct DllExport ObjectType
+{
+	NONE,
+	DATABASE,
+	TABLE,
+	COLUMN,
+	ROW,
+	PRIMITIVE
 };
 
 #endif // __TYPES_HPP__

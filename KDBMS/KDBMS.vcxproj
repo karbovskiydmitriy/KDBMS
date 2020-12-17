@@ -171,28 +171,37 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Attributes.cpp" />
+    <ClCompile Include="Condition.cpp" />
     <ClCompile Include="Data.cpp" />
     <ClCompile Include="IO.cpp" />
     <ClCompile Include="KDBMS.cpp" />
     <ClCompile Include="Database.cpp" />
-    <ClCompile Include="Query.cpp" />
-    <ClCompile Include="Serialization.cpp" />
+    <ClCompile Include="Response.cpp" />
+    <ClCompile Include="SerializedObject.cpp" />
     <ClCompile Include="Table.cpp" />
+    <ClCompile Include="TableColumn.cpp" />
+    <ClCompile Include="TableRow.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Config.h" />
+    <ClInclude Include="Attributes.hpp" />
+    <ClInclude Include="Comparison.hpp" />
+    <ClInclude Include="Condition.hpp" />
+    <ClInclude Include="Config.hpp" />
     <ClInclude Include="Data.hpp" />
+    <ClInclude Include="ErrorCode.hpp" />
     <ClInclude Include="Export.hpp" />
     <ClInclude Include="IO.hpp" />
     <ClInclude Include="KDBMS.hpp" />
     <ClInclude Include="Database.hpp" />
-    <ClInclude Include="Query.hpp" />
-    <ClInclude Include="Serialization.hpp" />
+    <ClInclude Include="Printable.hpp" />
+    <ClInclude Include="Response.hpp" />
+    <ClInclude Include="SerializedObject.hpp" />
+    <ClInclude Include="Serializeable.hpp" />
     <ClInclude Include="Table.hpp" />
+    <ClInclude Include="TableColumn.hpp" />
+    <ClInclude Include="TableRow.hpp" />
     <ClInclude Include="Types.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Interfaces.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

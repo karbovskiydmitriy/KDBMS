@@ -1,101 +1,5 @@
 #include "Table.hpp"
 
-Attributes::Attributes(bool nonNull, bool primaryKey, bool foreignKey)
-{
-	this->nonNull = nonNull;
-	this->primaryKey = primaryKey;
-	this->foreignKey = foreignKey;
-}
-
-TableColumn::TableColumn(String name, Type type, Attributes attributes)
-{
-	this->name = name;
-	this->type = type;
-	this->attributes = attributes;
-}
-
-SerializedObject TableColumn::Serialize()
-{
-	return SerializedObject();
-}
-
-bool TableColumn::Deserialize(char *rows)
-{
-	return false;
-}
-
-TableRow::TableRow(vector<TableColumn> *columns, vector<Data> fields)
-{
-	this->columns = columns;
-	this->fields = fields;
-}
-
-SerializedObject TableRow::Serialize()
-{
-	return SerializedObject();
-}
-
-bool TableRow::Deserialize(char *rows)
-{
-	return false;
-}
-
-String TableRow::ToString()
-{
-	String result = "Values: ";
-	int i = 0;
-
-	for (const auto &iterator : this->fields)
-	{
-		String value;
-
-		switch (this->columns->data()[i++].type)
-		{
-		case Type::BOOL:
-			value = String(iterator.value ? "true" : "false");
-			break;
-		case Type::CHAR:
-			value = String((const char *)&iterator.value);
-			break;
-		case Type::BYTE:
-		case Type::SHORT:
-		case Type::INT:
-		case Type::LONG:
-			value = To_String((long long)iterator.value);
-			break;
-		case Type::UBYTE:
-		case Type::USHORT:
-		case Type::UINT:
-		case Type::ULONG:
-			value = To_String((unsigned long long)iterator.value);
-			break;
-		case Type::FLOAT:
-			value = To_String((float)iterator.value);
-			break;
-		case Type::DOUBLE:
-			value = To_String((double)iterator.value);
-			break;
-		case Type::STRING:
-			value = *(String *)iterator.pointer;
-			break;
-		case Type::ENUM:
-		case Type::DATE:
-		case Type::TIME:
-		case Type::DATETIME:
-		case Type::BLOB:
-			value = String("Complex type");
-			break;
-		default:
-			value = String("unknown");
-			break;
-		}
-
-		result += "\t" + value; // TODO !!!
-	}
-
-	return result;
-}
-
 Table::Table(String name, vector<TableColumn> *columns)
 {
 	this->name = name;
@@ -106,9 +10,16 @@ Response Table::Insert(TableRow *row)
 {
 	if (row != nullptr)
 	{
-		this->rows.push_back(row);
+		if (row->fields.size() == this->columns->size())
+		{
+			this->rows.push_back(row);
 
-		return Response(ErrorCode::OK);
+			return Response(ErrorCode::OK);
+		}
+		else
+		{
+			return Response(ErrorCode::TYPE_CONFLICT);
+		}
 	}
 
 	return Response(ErrorCode::NULL_ARGUMENT);
@@ -122,9 +33,7 @@ Response Table::Select(Condition *condition)
 
 		for (const auto &iterator : this->rows)
 		{
-			// TODO
-
-			if (true)
+			if (condition->Check(iterator->fields))
 			{
 				entries->push_back(iterator);
 			}
@@ -145,9 +54,55 @@ Response Table::Select(Condition *condition)
 	}
 }
 
-Response Table::Update() // TODO
+Response Table::Update(Condition *condition, String columnName, Data value)
 {
-	return Response(ErrorCode::NOT_IMPLEMENTED);
+	if (condition != nullptr)
+	{
+		int index = this->GetColumnIndex(columnName);
+		if (index != -1)
+		{
+			for (const auto &iterator : this->rows)
+			{
+				if (condition->Check(iterator->fields))
+				{
+					iterator->fields.data()[index] = value;
+				}
+			}
+		}
+		else
+		{
+			return Response(ErrorCode::NOT_FOUND);
+		}
+
+		return Response(ErrorCode::OK);
+	}
+
+	return Response(ErrorCode::NULL_ARGUMENT);
+}
+
+Response Table::Update(Condition *condition, int index, Data value)
+{
+	if (condition != nullptr)
+	{
+		if (index >= 0 && index < (int)this->columns->size())
+		{
+			for (const auto &iterator : this->rows)
+			{
+				if (condition->Check(iterator->fields))
+				{
+					iterator->fields.data()[index] = value;
+				}
+			}
+		}
+		else
+		{
+			return Response(ErrorCode::NOT_FOUND);
+		}
+
+		return Response(ErrorCode::OK);
+	}
+
+	return Response(ErrorCode::NULL_ARGUMENT);
 }
 
 Response Table::Delete(Condition *condition)
@@ -156,13 +111,60 @@ Response Table::Delete(Condition *condition)
 	{
 		for (const auto &iterator : this->rows)
 		{
-			// TODO
+			if (condition->Check(iterator->fields))
+			{
+				DeleteRow(iterator);
+			}
 		}
 
-		return Response(ErrorCode::NOT_IMPLEMENTED);
+		return Response(ErrorCode::OK);
 	}
+	else
+	{
+		this->rows.clear();
 
-	return Response(ErrorCode::NULL_ARGUMENT);
+		return Response(ErrorCode::OK);
+	}
+}
+
+int Table::GetColumnIndex(String columnName)
+{
+	if (this->columns != nullptr)
+	{
+		for (int i = 0; i < (int)this->columns->size(); i++)
+		{
+			if (this->columns->data()[i].name == columnName)
+			{
+				return i;
+			}
+		}
+
+		return -1;
+	}
+	else
+	{
+		return -1;
+	}
+}
+
+Type Table::GetColumnType(String columnName)
+{
+	if (this->columns != nullptr)
+	{
+		for (int i = 0; i < (int)this->columns->size(); i++)
+		{
+			if (this->columns->data()[i].name == columnName)
+			{
+				return this->columns->data()->type;
+			}
+		}
+
+		return Type::NONE;
+	}
+	else
+	{
+		return Type::NONE;
+	}
 }
 
 SerializedObject Table::Serialize()
@@ -170,7 +172,7 @@ SerializedObject Table::Serialize()
 	return SerializedObject();
 }
 
-bool Table::Deserialize(char *rows)
+bool Table::Deserialize(SerializedObject object)
 {
 	return false;
 }

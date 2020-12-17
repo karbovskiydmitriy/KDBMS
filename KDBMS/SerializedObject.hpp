@@ -1,21 +1,11 @@
 #pragma once
 
-#ifndef __SERIALIZATION_HPP__
-#define __SERIALIZATION_HPP__
+#ifndef __SERIALIZEDOBJECT_HPP__
+#define __SERIALIZEDOBJECT_HPP__
 
-#include "Config.h"
+#include "Config.hpp"
 
 #include "Types.hpp"
-
-enum struct DllExport ObjectType
-{
-	NONE,
-	DATABASE,
-	TABLE,
-	COLUMN,
-	ROW,
-	PRIMITIVE
-};
 
 struct DllExport SerializedObject
 {
@@ -27,6 +17,7 @@ struct DllExport SerializedObject
 	SerializedObject();
 	SerializedObject(ObjectType type, uint64_t length, Pointer data);
 	SerializedObject(Type primitiveType, uint64_t length, Pointer data);
+	~SerializedObject();
 };
 
-#endif // __SERIALIZATION_HPP__
+#endif // __SERIALIZEDOBJECT_HPP__

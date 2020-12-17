@@ -50,7 +50,7 @@ SerializedObject Database::Serialize()
 	return SerializedObject();
 }
 
-bool Database::Deserialize(char *rows)
+bool Database::Deserialize(SerializedObject object)
 {
 	return false;
 }

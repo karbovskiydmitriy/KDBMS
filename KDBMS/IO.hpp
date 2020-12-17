@@ -3,7 +3,7 @@
 #ifndef __IO_HPP__
 #define __IO_HPP__
 
-#include "Config.h"
+#include "Config.hpp"
 
 #include <string>
 #include <vector>

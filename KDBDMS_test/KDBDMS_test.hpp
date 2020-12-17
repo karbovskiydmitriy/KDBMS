@@ -8,6 +8,6 @@
 #pragma comment(lib, "KDBMS.lib")
 
 int __cdecl main();
-void SetupTests();
+void Test();
 
 #endif // __KDBDMS_TEST_HPP__

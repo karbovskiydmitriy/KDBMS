@@ -1,12 +1,5 @@
 #include "KDBMS.hpp"
 
-/*int main()
-{
-	SetupTests();
-
-	return 1;
-}*/
-
 Manager::Manager(String name)
 {
 	this->name = name;
@@ -110,7 +103,7 @@ SerializedObject Manager::Serialize()
 	return SerializedObject();
 }
 
-bool Manager::Deserialize(char *rows)
+bool Manager::Deserialize(SerializedObject object)
 {
 	return false;
 }

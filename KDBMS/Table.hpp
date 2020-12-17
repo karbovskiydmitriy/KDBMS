@@ -3,52 +3,26 @@
 #ifndef __TABLE_HPP__
 #define __TABLE_HPP__
 
-#include "Config.h"
+#include "Config.hpp"
 
 #include <list>
 #include <vector>
 #include <string>
 
 #include "Types.hpp"
-#include "Interfaces.hpp"
-#include "Serialization.hpp"
-#include "Query.hpp"
-#include "Data.hpp"
+#include "Serializeable.hpp"
+#include "Printable.hpp"
+#include "SerializedObject.hpp"
+#include "Response.hpp"
+#include "Condition.hpp"
+#include "Attributes.hpp"
+#include "TableColumn.hpp"
+#include "TableRow.hpp"
 
 using namespace std;
 
-struct DllExport Attributes
-{
-	bool nonNull : 1;
-	bool primaryKey : 1;
-	bool foreignKey : 1;
-
-	Attributes(bool nonNull = false, bool primaryKey = false, bool foreignKey = false);
-};
-
-struct DllExport TableColumn : Serializeable
-{
-	String name;
-	Type type;
-	Attributes attributes;
-
-	TableColumn(String name, Type type, Attributes attributes = 0);
-
-	SerializedObject Serialize() override;
-	bool Deserialize(char *rows) override;
-};
-
-struct DllExport TableRow : Serializeable, Printable
-{
-	vector<TableColumn> *columns;
-	vector<Data> fields;
-
-	TableRow(vector<TableColumn> *columns, vector<Data> fields);
-
-	SerializedObject Serialize() override;
-	bool Deserialize(char *rows) override;
-	String ToString() override;
-};
+struct Response;
+struct Condition;
 
 struct DllExport Table : Serializeable, Printable
 {
@@ -56,15 +30,18 @@ struct DllExport Table : Serializeable, Printable
 	vector<TableColumn> *columns;
 	list<TableRow *> rows;
 
-	Table(String name, vector<TableColumn> *columns = nullptr);
+	Table(String name, vector<TableColumn> *columns);
 
 	Response Insert(TableRow *row);
-	Response Select(Condition *condition);
-	Response Update(); // TODO
+	Response Select(Condition *condition = nullptr);
+	Response Update(Condition *condition, String columnName, Data value);
+	Response Update(Condition *condition, int index, Data value);
 	Response Delete(Condition *condition);
+	int GetColumnIndex(String columnName);
+	Type GetColumnType(String columnName);
 
 	SerializedObject Serialize() override;
-	bool Deserialize(char *rows) override;
+	bool Deserialize(SerializedObject object) override;
 	String ToString() override;
 
 private:

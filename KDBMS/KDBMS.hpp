@@ -3,16 +3,16 @@
 #ifndef __KDBMS_HPP__
 #define __KDBMS_HPP__
 
-#include "Config.h"
+#include "Config.hpp"
 
 #include <string>
 #include <vector>
 #include <iostream>
 
 #include "Database.hpp"
-#include "Interfaces.hpp"
-#include "Serialization.hpp"
-#include "Query.hpp"
+#include "Serializeable.hpp"
+#include "SerializedObject.hpp"
+#include "Response.hpp"
 
 using namespace std;
 
@@ -31,7 +31,7 @@ struct DllExport Manager : Serializeable
 	void EnableLoggning(bool logging);
 
 	SerializedObject Serialize() override;
-	bool Deserialize(char *rows) override;
+	bool Deserialize(SerializedObject object) override;
 
 private:
 	bool logging = false;
@@ -41,7 +41,5 @@ private:
 	Database *FindDatabaseByName(String name);
 	bool DeleteDatabase(Database *database);
 };
-
-// int main();
 
 #endif // __KDBMS_HPP__

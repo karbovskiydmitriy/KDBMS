@@ -3,7 +3,7 @@
 #ifndef __DATA_HPP__
 #define __DATA_HPP__
 
-#include "Config.h"
+#include "Config.hpp"
 
 #include <vector>
 #include <list>
@@ -22,12 +22,16 @@ struct DllExport Enum
 
 struct DllExport Date
 {
-	// TODO
+	int day;
+	int month;
+	int year;
 };
 
 struct DllExport Time
 {
-	// TODO
+	int second;
+	int minute;
+	int hour;
 };
 
 struct DllExport DateTime

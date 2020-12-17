@@ -3,7 +3,7 @@
 #ifndef __EXPORT_HPP__
 #define __EXPORT_HPP__
 
-#include "Config.h"
+#include "Config.hpp"
 
 #include <vector>
 #include <array>
@@ -16,10 +16,16 @@
 #include "KDBMS.hpp"
 #include "Database.hpp"
 #include "IO.hpp"
-#include "Interfaces.hpp"
-#include "Query.hpp"
-#include "Serialization.hpp"
+#include "Serializeable.hpp"
+#include "Printable.hpp"
+#include "Response.hpp"
+#include "SerializedObject.hpp"
 #include "Table.hpp"
+#include "TableColumn.hpp"
+#include "TableRow.hpp"
+#include "Attributes.hpp"
+#include "Condition.hpp"
+#include "Comparison.hpp"
 
 using namespace std;
 using namespace std::filesystem;

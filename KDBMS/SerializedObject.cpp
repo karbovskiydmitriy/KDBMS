@@ -1,4 +1,4 @@
-#include "Serialization.hpp"
+#include "SerializedObject.hpp"
 
 SerializedObject::SerializedObject()
 {
@@ -22,4 +22,12 @@ SerializedObject::SerializedObject(Type primitiveType, uint64_t length, Pointer 
 	this->primitiveType = primitiveType;
 	this->length = length;
 	this->data = data;
+}
+
+SerializedObject::~SerializedObject()
+{
+	/*if (this->data)
+	{
+		delete[] this->data;
+	}*/
 }

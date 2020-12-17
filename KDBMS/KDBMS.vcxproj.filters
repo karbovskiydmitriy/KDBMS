@@ -23,20 +23,29 @@
     <ClCompile Include="Table.cpp">
       <Filter>Source code files</Filter>
     </ClCompile>
-    <ClCompile Include="Serialization.cpp">
-      <Filter>Source code files</Filter>
-    </ClCompile>
-    <ClCompile Include="Query.cpp">
-      <Filter>Source code files</Filter>
-    </ClCompile>
     <ClCompile Include="Data.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+    <ClCompile Include="Condition.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+    <ClCompile Include="Attributes.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+    <ClCompile Include="TableColumn.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+    <ClCompile Include="TableRow.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+    <ClCompile Include="Response.cpp">
+      <Filter>Source code files</Filter>
+    </ClCompile>
+    <ClCompile Include="SerializedObject.cpp">
       <Filter>Source code files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Config.h">
-      <Filter>Header files</Filter>
-    </ClInclude>
     <ClInclude Include="IO.hpp">
       <Filter>Header files</Filter>
     </ClInclude>
@@ -52,22 +61,44 @@
     <ClInclude Include="Table.hpp">
       <Filter>Header files</Filter>
     </ClInclude>
-    <ClInclude Include="Serialization.hpp">
-      <Filter>Header files</Filter>
-    </ClInclude>
     <ClInclude Include="Types.hpp">
-      <Filter>Header files</Filter>
-    </ClInclude>
-    <ClInclude Include="Query.hpp">
       <Filter>Header files</Filter>
     </ClInclude>
     <ClInclude Include="Data.hpp">
       <Filter>Header files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Interfaces.hpp">
+    <ClInclude Include="Condition.hpp">
       <Filter>Header files</Filter>
-    </None>
+    </ClInclude>
+    <ClInclude Include="Attributes.hpp">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="TableColumn.hpp">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="TableRow.hpp">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="Comparison.hpp">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="Config.hpp">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="Response.hpp">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="ErrorCode.hpp">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="Serializeable.hpp">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="Printable.hpp">
+      <Filter>Header files</Filter>
+    </ClInclude>
+    <ClInclude Include="SerializedObject.hpp">
+      <Filter>Header files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

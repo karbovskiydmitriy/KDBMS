@@ -3,7 +3,7 @@
 #ifndef __DATABASE_HPP__
 #define __DATABASE_HPP__
 
-#include "Config.h"
+#include "Config.hpp"
 
 #include <list>
 #include <vector>
@@ -11,9 +11,9 @@
 
 #include "Types.hpp"
 #include "Table.hpp"
-#include "Interfaces.hpp"
-#include "Serialization.hpp"
-#include "Query.hpp"
+#include "Serializeable.hpp"
+#include "SerializedObject.hpp"
+#include "Response.hpp"
 
 using namespace std;
 
@@ -28,7 +28,7 @@ struct DllExport Database : Serializeable
 	Response DropTable(String name);
 
 	SerializedObject Serialize() override;
-	bool Deserialize(char *rows) override;
+	bool Deserialize(SerializedObject object) override;
 
 private:
 	list<Table *> *tables;

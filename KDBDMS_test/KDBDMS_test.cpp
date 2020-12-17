@@ -2,12 +2,12 @@
 
 int __cdecl main()
 {
-	SetupTests();
+	Test();
 
 	return 0;
 }
 
-void SetupTests()
+void Test()
 {
 	Response r;
 	Manager *manager;
@@ -46,7 +46,7 @@ void SetupTests()
 			table->columns,
 			{
 				Data(id++),
-				Data(new String("Dmitriy")),
+				Data(new String(TEXT("Dmitriy"))),
 				Data((unsigned short)21)
 			}
 		)
@@ -58,7 +58,19 @@ void SetupTests()
 			table->columns,
 			{
 				Data(id++),
-				Data(new String("foo")),
+				Data(new String(TEXT("under18"))),
+				Data((unsigned short)17)
+			}
+		)
+	);
+	r = table->Insert
+	(
+		new TableRow
+		(
+			table->columns,
+			{
+				Data(id++),
+				Data(new String(TEXT("foo"))),
 				Data((unsigned short)42)
 			}
 		)
@@ -70,22 +82,35 @@ void SetupTests()
 			table->columns,
 			{
 				Data(id++),
-				Data(new String("bar")),
+				Data(new String(TEXT("bar"))),
 				Data((unsigned short)1337)
 			}
 		)
 	);
-
-	r = table->Update();
-
-	r = table->Select(
-		new Condition
+	r = table->Insert
+	(
+		new TableRow
 		(
-			String(TEXT("age")),
-			Data((unsigned short)18),
-			Type::USHORT,
-			Comparison::GREATER_OR_EQUALS_THAN
+			table->columns,
+			{
+				Data(id++),
+				Data(new String(TEXT("test"))),
+				Data((unsigned short)9999)
+			}
 		)
+	);
+
+	Condition *condition18 = new Condition
+	(
+		table,
+		String(TEXT("age")),
+		Data((unsigned short)18),
+		Comparison::GREATER_OR_EQUALS_THAN
+	);
+
+	r = table->Select
+	(
+		nullptr
 	);
 	vector<TableRow *> *entries = (vector<TableRow *> *)r.data;
 
@@ -98,15 +123,38 @@ void SetupTests()
 	}
 	else
 	{
-		cout << "No entries!" << endl;
+		cout << TEXT("No entries!") << endl;
+	}
+
+	Condition *updateCondition = new Condition
+	(
+		table,
+		String(TEXT("age")),
+		Data((unsigned short)18),
+		Comparison::GREATER_OR_EQUALS_THAN
+	);
+
+	table->Update(updateCondition, String(TEXT("name")), Data(new String(TEXT("Oldman"))));
+
+	r = table->Select();
+	entries = (vector<TableRow *> *)r.data;
+
+	SerializedObject object = table->columns->data()[0].Serialize();
+	bool result = table->columns->data()[0].Deserialize(object);
+
+	cout << endl << table->ToString() << endl;
+
+	if (entries->size() != 0)
+	{
+		for (int i = 0; i < (int)entries->size(); i++)
+		{
+			cout << entries->data()[i]->ToString() << endl;
+		}
+	}
+	else
+	{
+		cout << TEXT("No entries!") << endl;
 	}
 
 	manager->DropDatabase(TEXT("My test database #1"));
-}
-
-bool Condition::Check(Data value)
-{
-	// TODO
-
-	return false;
 }
