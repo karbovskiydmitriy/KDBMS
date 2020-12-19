@@ -169,12 +169,131 @@ Type Table::GetColumnType(String columnName)
 
 SerializedObject Table::Serialize()
 {
-	return SerializedObject();
+	uint32_t nameLength = Strlen(this->name.c_str());
+	uint64_t length = 12ull + nameLength;
+
+	vector<SerializedObject> serializedColumns;
+	for (auto column = this->columns->begin(); column != this->columns->end(); column++)
+	{
+		SerializedObject object = column->Serialize();
+		serializedColumns.push_back(object);
+		length += offsetof(SerializedObject, data) + object.length;
+	}
+
+	vector<SerializedObject> serializedRows;
+	for (const auto &row : this->rows)
+	{
+		SerializedObject object = row->Serialize();
+		serializedRows.push_back(object);
+		length += offsetof(SerializedObject, data) + object.length;
+	}
+
+	char *buffer = new char[(uint32_t)length];
+	char *bufferPointer = buffer;
+
+	((uint32_t *)bufferPointer)[0] = nameLength;
+	bufferPointer += 4;
+	memcpy(bufferPointer, this->name.c_str(), nameLength);
+	bufferPointer += nameLength;
+
+	((uint32_t *)bufferPointer)[0] = serializedColumns.size();
+	bufferPointer += 4;
+	for (const auto &object : serializedColumns)
+	{
+		memcpy(bufferPointer, &object, offsetof(SerializedObject, data));
+		bufferPointer += offsetof(SerializedObject, data);
+		memcpy(bufferPointer, object.data, (size_t)object.length);
+		bufferPointer += object.length;
+	}
+
+	((uint32_t *)bufferPointer)[0] = serializedRows.size();
+	bufferPointer += 4;
+	for (const auto &object : serializedRows)
+	{
+		memcpy(bufferPointer, &object, offsetof(SerializedObject, data));
+		bufferPointer += offsetof(SerializedObject, data);
+		memcpy(bufferPointer, object.data, (size_t)object.length);
+		bufferPointer += object.length;
+	}
+
+	return SerializedObject(ObjectType::TABLE, length, buffer);
 }
 
 bool Table::Deserialize(SerializedObject object)
 {
-	return false;
+	if (object.length <= 0)
+	{
+		return false;
+	}
+
+	if (object.data == null)
+	{
+		return false;
+	}
+
+	char *bufferPointer = (char *)object.data;
+
+	uint32_t nameLength = ((uint32_t *)bufferPointer)[0];
+	bufferPointer += 4;
+	char *nameBuffer = new char[nameLength + 4];
+	((uint32_t *)(nameBuffer + nameLength))[0] = 0;
+	memcpy(nameBuffer, bufferPointer, nameLength);
+	this->name.clear();
+	this->name = String(nameBuffer);
+	delete[] nameBuffer;
+	bufferPointer += nameLength;
+	
+	if (this->columns != nullptr)
+	{
+		this->columns->clear();
+	}
+
+	this->columns = new vector<TableColumn>();
+
+	uint32_t columnsCount = ((uint32_t *)bufferPointer)[0];
+	bufferPointer += 4;
+	for (int i = 0; i < (int)columnsCount; i++)
+	{
+		SerializedObject object;
+		memcpy(&object, bufferPointer, offsetof(SerializedObject, data));
+		bufferPointer += offsetof(SerializedObject, data);
+		object.data = bufferPointer;
+		bufferPointer += object.length;
+		TableColumn column = TableColumn(String(), Type::NONE);
+		bool result = column.Deserialize(object);
+		if (!result)
+		{
+			return false;
+		}
+		this->columns->push_back(column);
+	}
+
+	if (this->rows.size() != 0)
+	{
+		this->rows.clear();
+	}
+
+	this->rows = list<TableRow *>();
+
+	uint32_t rowsCount = ((uint32_t *)bufferPointer)[0];
+	bufferPointer += 4;
+	for (int i = 0; i < (int)rowsCount; i++)
+	{
+		SerializedObject object;
+		memcpy(&object, bufferPointer, offsetof(SerializedObject, data));
+		bufferPointer += offsetof(SerializedObject, data);
+		object.data = bufferPointer;
+		bufferPointer += object.length;
+		TableRow *row = new TableRow(this->columns, vector<Data>());
+		bool result = row->Deserialize(object);
+		if (!result)
+		{
+			return false;
+		}
+		this->rows.push_back(row);
+	}
+
+	return true;
 }
 
 String Table::ToString()
@@ -183,7 +302,7 @@ String Table::ToString()
 
 	for (const auto &iterator : *this->columns)
 	{
-		result += "\t" + iterator.name;
+		result += TEXT("\t") + iterator.name;
 	}
 
 	return result;

@@ -5,7 +5,7 @@ SerializedObject::SerializedObject()
 	this->type = ObjectType::NONE;
 	this->primitiveType = Type::NONE;
 	this->length = 0;
-	this->data = null;
+	this->data = 0;
 }
 
 SerializedObject::SerializedObject(ObjectType type, uint64_t length, Pointer data)
@@ -22,12 +22,4 @@ SerializedObject::SerializedObject(Type primitiveType, uint64_t length, Pointer 
 	this->primitiveType = primitiveType;
 	this->length = length;
 	this->data = data;
-}
-
-SerializedObject::~SerializedObject()
-{
-	/*if (this->data)
-	{
-		delete[] this->data;
-	}*/
 }

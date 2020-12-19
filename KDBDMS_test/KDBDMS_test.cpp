@@ -4,6 +4,8 @@ int __cdecl main()
 {
 	Test();
 
+	system("pause");
+
 	return 0;
 }
 
@@ -108,6 +110,8 @@ void Test()
 		Comparison::GREATER_OR_EQUALS_THAN
 	);
 
+	// SerializedObject testSO = table->Serialize();
+
 	r = table->Select
 	(
 		nullptr
@@ -141,6 +145,19 @@ void Test()
 
 	SerializedObject object = table->columns->data()[0].Serialize();
 	bool result = table->columns->data()[0].Deserialize(object);
+
+	for (const auto &row : table->rows)
+	{
+		SerializedObject obj = row->Serialize();
+		TableRow tableRow = TableRow(table->columns, vector<Data>());
+		tableRow.Deserialize(obj);
+	}
+
+	SerializedObject serializedTable = table->Serialize();
+	result = table->Deserialize(serializedTable);
+
+	SerializedObject serializedDatabse = db->Serialize();
+	result = db->Deserialize(serializedDatabse);
 
 	cout << endl << table->ToString() << endl;
 

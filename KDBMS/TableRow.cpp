@@ -1,5 +1,11 @@
 #include "TableRow.hpp"
 
+TableRow::TableRow()
+{
+	this->columns = nullptr;
+	this->fields = vector<Data>();
+}
+
 TableRow::TableRow(vector<TableColumn> *columns, vector<Data> fields)
 {
 	this->columns = columns;
@@ -29,8 +35,11 @@ SerializedObject TableRow::Serialize()
 			length += sizeof(Data);
 			break;
 		case Type::STRING:
-			length += 4 + ((String *)this->fields.data()[i].pointer)->length();
-			break;
+		{
+			const char *str = ((String *)this->fields.data()[i].pointer)->c_str();
+			length += 4 + Strlen(str);
+		}
+		break;
 		case Type::DATE:
 			length += sizeof(Date);
 			break;
@@ -69,7 +78,7 @@ SerializedObject TableRow::Serialize()
 		case Type::FLOAT:
 		case Type::DOUBLE:
 		{
-			memcpy(bufferPointer, &this->fields.data()[i].value, sizeof(Data));
+			((Data *)bufferPointer)[0] = this->fields.data()[i];
 			bufferPointer += sizeof(Data);
 		}
 		break;
@@ -85,19 +94,19 @@ SerializedObject TableRow::Serialize()
 		break;
 		case Type::DATE:
 		{
-			memcpy(bufferPointer, this->fields.data()[i].pointer, sizeof(Date));
+			((Date *)bufferPointer)[0] = ((Date *)this->fields.data()[i].pointer)[0];
 			bufferPointer += sizeof(Date);
 		}
 		break;
 		case Type::TIME:
 		{
-			memcpy(bufferPointer, this->fields.data()[i].pointer, sizeof(Time));
+			((Time *)bufferPointer)[0] = ((Time *)this->fields.data()[i].pointer)[0];
 			bufferPointer += sizeof(Time);
 		}
 		break;
 		case Type::DATETIME:
 		{
-			memcpy(bufferPointer, this->fields.data()[i].pointer, sizeof(DateTime));
+			((DateTime *)bufferPointer)[0] = ((DateTime *)this->fields.data()[i].pointer)[0];
 			bufferPointer += sizeof(DateTime);
 		}
 		break;
@@ -121,15 +130,23 @@ SerializedObject TableRow::Serialize()
 
 bool TableRow::Deserialize(SerializedObject object)
 {
-	int count = this->columns->size();
+	if (object.length <= 0)
+	{
+		return false;
+	}
+
+	if (object.data == null)
+	{
+		return false;
+	}
 
 	char *bufferPointer = (char *)object.data;
 
 	this->fields.clear();
-	fields.reserve((size_t)count);
 
 	for (int i = 0; i < (int)this->columns->size(); i++)
 	{
+		Data data;
 		switch (this->columns->data()[i].type)
 		{
 		case Type::BOOL:
@@ -145,7 +162,7 @@ bool TableRow::Deserialize(SerializedObject object)
 		case Type::FLOAT:
 		case Type::DOUBLE:
 		{
-			memcpy(&this->fields.data()[i].value, bufferPointer, sizeof(Data));
+			memcpy(&data.value, bufferPointer, sizeof(Data));
 			bufferPointer += sizeof(Data);
 		}
 		break;
@@ -156,28 +173,26 @@ bool TableRow::Deserialize(SerializedObject object)
 			((uint32_t *)(buffer + stringLength))[0] = 0;
 			bufferPointer += 4;
 			memcpy(buffer, bufferPointer, stringLength);
-			String *str = (String *)this->fields.data()[i].pointer;
-			delete str;
-			str = new String(buffer);
+			data.pointer = new String(buffer);
 			delete[] buffer;
 			bufferPointer += stringLength;
 		}
 		break;
 		case Type::DATE:
 		{
-			memcpy(this->fields.data()[i].pointer, bufferPointer, sizeof(Date));
+			data.pointer = new Date((const Date &)bufferPointer);
 			bufferPointer += sizeof(Date);
 		}
 		break;
 		case Type::TIME:
 		{
-			memcpy(this->fields.data()[i].pointer, bufferPointer, sizeof(Time));
+			data.pointer = new Time((const Time &)bufferPointer);
 			bufferPointer += sizeof(Time);
 		}
 		break;
 		case Type::DATETIME:
 		{
-			memcpy(this->fields.data()[i].pointer, bufferPointer, sizeof(DateTime));
+			data.pointer = new DateTime((const DateTime &)bufferPointer);
 			bufferPointer += sizeof(DateTime);
 		}
 		break;
@@ -187,7 +202,7 @@ bool TableRow::Deserialize(SerializedObject object)
 			char *buffer = new char[blobLength];
 			bufferPointer += 4;
 			memcpy(buffer, bufferPointer, blobLength);
-			((Blob *)this->fields.data()[i].pointer)->assign((const size_t)blobLength, (const char &)buffer);
+			data.pointer = new Blob((const size_t)blobLength, (const char &)buffer);
 			bufferPointer += blobLength;
 		}
 		break;
@@ -195,6 +210,7 @@ bool TableRow::Deserialize(SerializedObject object)
 			// TODO
 			break;
 		}
+		this->fields.push_back(data);
 	}
 
 	return true;

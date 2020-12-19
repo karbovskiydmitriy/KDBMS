@@ -19,6 +19,7 @@ struct DllExport TableColumn : Serializeable
 	Type type;
 	Attributes attributes;
 
+	TableColumn();
 	TableColumn(String name, Type type, Attributes attributes = 0);
 
 	SerializedObject Serialize() override;

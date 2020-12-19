@@ -20,6 +20,7 @@ struct DllExport TableRow : Serializeable, Printable
 	vector<TableColumn> *columns;
 	vector<Data> fields;
 
+	TableRow();
 	TableRow(vector<TableColumn> *columns, vector<Data> fields);
 
 	SerializedObject Serialize() override;

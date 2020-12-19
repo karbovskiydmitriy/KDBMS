@@ -1,5 +1,11 @@
 #include "TableColumn.hpp"
 
+TableColumn::TableColumn()
+{
+	this->type = Type::NONE;
+	this->attributes = 0;
+}
+
 TableColumn::TableColumn(String name, Type type, Attributes attributes)
 {
 	this->name = name;
@@ -49,8 +55,10 @@ bool TableColumn::Deserialize(SerializedObject object)
 	this->name = String(nameBuffer);
 	delete[] nameBuffer;
 	bufferPointer += nameLength;
+
 	memcpy(&this->type, bufferPointer, sizeof(Type));
 	bufferPointer += sizeof(Type);
+
 	memcpy(&this->attributes, bufferPointer, sizeof(Attributes));
 
 	return true;

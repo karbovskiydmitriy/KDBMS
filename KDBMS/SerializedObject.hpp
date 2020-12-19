@@ -7,6 +7,8 @@
 
 #include "Types.hpp"
 
+#pragma pack(push, 1)
+
 struct DllExport SerializedObject
 {
 	ObjectType type;
@@ -17,7 +19,8 @@ struct DllExport SerializedObject
 	SerializedObject();
 	SerializedObject(ObjectType type, uint64_t length, Pointer data);
 	SerializedObject(Type primitiveType, uint64_t length, Pointer data);
-	~SerializedObject();
 };
+
+#pragma pack(pop)
 
 #endif // __SERIALIZEDOBJECT_HPP__
