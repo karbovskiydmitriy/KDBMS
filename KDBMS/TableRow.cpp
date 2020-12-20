@@ -53,7 +53,6 @@ SerializedObject TableRow::Serialize()
 			length += 4 + ((Blob *)this->fields.data()[i].pointer)->size();
 			break;
 		default:
-			// TODO
 			break;
 		}
 	}
@@ -120,7 +119,6 @@ SerializedObject TableRow::Serialize()
 		}
 		break;
 		default:
-			// TODO
 			break;
 		}
 	}
@@ -207,7 +205,6 @@ bool TableRow::Deserialize(SerializedObject object)
 		}
 		break;
 		default:
-			// TODO
 			break;
 		}
 		this->fields.push_back(data);
@@ -266,7 +263,7 @@ String TableRow::ToString()
 			break;
 		}
 
-		result += TEXT("\t") + value; // TODO !!!
+		result += TEXT("\t") + value;
 	}
 
 	return result;

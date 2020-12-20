@@ -10,31 +10,26 @@
 #include <iostream>
 
 #include "Database.hpp"
-#include "Serializeable.hpp"
-#include "SerializedObject.hpp"
+#include "Printable.hpp"
 #include "Response.hpp"
 
 using namespace std;
 
-struct DllExport Manager : Serializeable
+struct DllExport Manager : Printable
 {
 	String name;
 
 	Manager(String name);
-	~Manager();
 
 	Response CreateDatabase(String name);
 	Response Use(String name);
 	Response Use(Database *database);
 	Response DropDatabase(String name);
 	Response DropDatabase(Database *database);
-	void EnableLoggning(bool logging);
 
-	SerializedObject Serialize() override;
-	bool Deserialize(SerializedObject object) override;
+	String ToString() override;
 
 private:
-	bool logging = false;
 	list<Database *> databases;
 	Database *currentDatabase = nullptr;
 

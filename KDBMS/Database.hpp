@@ -14,10 +14,11 @@
 #include "Serializeable.hpp"
 #include "SerializedObject.hpp"
 #include "Response.hpp"
+#include "IO.hpp"
 
 using namespace std;
 
-struct DllExport Database : Serializeable
+struct DllExport Database : Serializeable, Printable
 {
 	String name;
 
@@ -26,9 +27,13 @@ struct DllExport Database : Serializeable
 	Response CreateTable(String name, vector<TableColumn> *columns = nullptr);
 	Response AlterTable(String name, vector<TableColumn> *columns = nullptr);
 	Response DropTable(String name);
+	Response FindTable(String name);
+	Response SaveToFile(String fileName);
+	Response LoadFromFile(String fileName);
 
 	SerializedObject Serialize() override;
 	bool Deserialize(SerializedObject object) override;
+	String ToString() override;
 
 private:
 	list<Table *> *tables;

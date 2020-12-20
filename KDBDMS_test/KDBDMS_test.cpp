@@ -1,134 +1,175 @@
 #include "KDBDMS_test.hpp"
 
+Manager *manager;
+Database *db;
+Table *table;
+Response r;
+
+vector<TableColumn> columns =
+{
+	TableColumn(String(TEXT("id")), Type::ULONG),
+	TableColumn(String(TEXT("name")), Type::STRING),
+	TableColumn(String(TEXT("age")), Type::USHORT)
+};
+
+vector<TableRow *> testRows =
+{
+	new TableRow
+	(
+		nullptr,
+		{
+			Data((unsigned long long)1),
+			Data(new String(TEXT("Dmitriy"))),
+			Data((unsigned short)21)
+		}
+	),
+	new TableRow
+	(
+		nullptr,
+		{
+			Data((unsigned long long)2),
+			Data(new String(TEXT("under18"))),
+			Data((unsigned short)17)
+		}
+	),
+	new TableRow
+	(
+		nullptr,
+		{
+			Data((unsigned long long)3),
+			Data(new String(TEXT("foo"))),
+			Data((unsigned short)42)
+		}
+	),
+	new TableRow
+	(
+		nullptr,
+		{
+			Data((unsigned long long)4),
+			Data(new String(TEXT("bar"))),
+			Data((unsigned short)1337)
+		}
+	),
+	new TableRow
+	(
+		nullptr,
+		{
+			Data((unsigned long long)5),
+			Data(new String(TEXT("test"))),
+			Data((unsigned short)9999)
+		}
+	)
+};
+
 int __cdecl main()
 {
-	Test();
+	Test1();
+
+	system("pause");
+
+	Test2();
+
+	system("pause");
+
+	Test3();
+
+	system("pause");
+
+	Test4();
 
 	system("pause");
 
 	return 0;
 }
 
-void Test()
+void Test1()
 {
-	Response r;
-	Manager *manager;
-	Database *db;
-	Table *table;
+	cout << endl << TEXT("Test #1") << endl;
 
-	manager = new Manager(TEXT("Test session"));
+	manager = new Manager(TEXT("Test manager #1"));
 
-	cout << TEXT("Opening ") << TEXT("My test database #1") << endl;
+	Output(manager);
 
 	r = manager->CreateDatabase(TEXT("My test database #1"));
+	r = manager->CreateDatabase(TEXT("My test database #2"));
+	r = manager->CreateDatabase(TEXT("My test database #3"));
+	r = manager->CreateDatabase(TEXT("My test database #4"));
+	r = manager->CreateDatabase(TEXT("My test database #5"));
 
-	r = manager->Use(TEXT("My test database #1"));
+	Output(manager);
+
+	r = manager->DropDatabase(TEXT("My test database #1"));
+	r = manager->DropDatabase(TEXT("My test database #2"));
+	r = manager->DropDatabase(TEXT("My test database #3"));
+	r = manager->DropDatabase(TEXT("My test database #4"));
+	r = manager->DropDatabase(TEXT("My test database #5"));
+
+	Output(manager);
+
+	delete manager;
+}
+
+void Test2()
+{
+	cout << endl << TEXT("Test #2") << endl;
+
+	manager = new Manager(TEXT("Test manager #2"));
+	r = manager->CreateDatabase(TEXT("My test database #2"));
 	db = (Database *)r.data;
-
-	cout << TEXT("Used ") << db->name << endl;
-
-	vector<TableColumn> columns =
-	{
-		TableColumn(String(TEXT("id")), Type::LONG),
-		TableColumn(String(TEXT("name")), Type::STRING),
-		TableColumn(String(TEXT("age")), Type::USHORT)
-	};
 	r = db->CreateTable(TEXT("Persons"), &columns);
-
 	table = (Table *)r.data;
 
-	cout << endl << table->ToString() << endl;
+	for (int i = 0; i < (int)testRows.size(); i++)
+	{
+		testRows.data()[i]->columns = table->columns;
+		r = table->Insert(testRows.data()[i]);
+	}
 
-	int64_t id = 1;
+	Output(table);
 
-	r = table->Insert
-	(
-		new TableRow
-		(
-			table->columns,
-			{
-				Data(id++),
-				Data(new String(TEXT("Dmitriy"))),
-				Data((unsigned short)21)
-			}
-		)
-	);
-	r = table->Insert
-	(
-		new TableRow
-		(
-			table->columns,
-			{
-				Data(id++),
-				Data(new String(TEXT("under18"))),
-				Data((unsigned short)17)
-			}
-		)
-	);
-	r = table->Insert
-	(
-		new TableRow
-		(
-			table->columns,
-			{
-				Data(id++),
-				Data(new String(TEXT("foo"))),
-				Data((unsigned short)42)
-			}
-		)
-	);
-	r = table->Insert
-	(
-		new TableRow
-		(
-			table->columns,
-			{
-				Data(id++),
-				Data(new String(TEXT("bar"))),
-				Data((unsigned short)1337)
-			}
-		)
-	);
-	r = table->Insert
-	(
-		new TableRow
-		(
-			table->columns,
-			{
-				Data(id++),
-				Data(new String(TEXT("test"))),
-				Data((unsigned short)9999)
-			}
-		)
-	);
-
-	Condition *condition18 = new Condition
+	Condition *deleteCondition = new Condition
 	(
 		table,
-		String(TEXT("age")),
-		Data((unsigned short)18),
-		Comparison::GREATER_OR_EQUALS_THAN
+		String(TEXT("id")),
+		Data((unsigned long long)3),
+		Comparison::LESS_THAN,
+		nullptr,
+		new Condition
+		(
+			table,
+			String(TEXT("id")),
+			Data((unsigned long long)3),
+			Comparison::GREATER_THAN
+		)
 	);
 
-	// SerializedObject testSO = table->Serialize();
+	r = table->Delete(deleteCondition);
+	delete deleteCondition;
 
-	r = table->Select
-	(
-		nullptr
-	);
-	vector<TableRow *> *entries = (vector<TableRow *> *)r.data;
+	Output(table);
 
-	if (entries->size() != 0)
+	manager->DropDatabase(TEXT("My test database #2"));
+
+	delete manager;
+}
+
+void Test3()
+{
+	cout << endl << TEXT("Test #3") << endl;
+
+	manager = new Manager(TEXT("Test manager #3"));
+	r = manager->CreateDatabase(TEXT("My test database #3"));
+	db = (Database *)r.data;
+	r = db->CreateTable(TEXT("Persons"), &columns);
+	table = (Table *)r.data;
+
+	for (int i = 0; i < (int)testRows.size(); i++)
 	{
-		for (int i = 0; i < (int)entries->size(); i++)
-		{
-			cout << entries->data()[i]->ToString() << endl;
-		}
+		testRows.data()[i]->columns = table->columns;
+		r = table->Insert(testRows.data()[i]);
 	}
-	else
-	{
-		cout << TEXT("No entries!") << endl;
-	}
+
+	Output(table);
 
 	Condition *updateCondition = new Condition
 	(
@@ -137,35 +178,71 @@ void Test()
 		Data((unsigned short)18),
 		Comparison::GREATER_OR_EQUALS_THAN
 	);
-
 	table->Update(updateCondition, String(TEXT("name")), Data(new String(TEXT("Oldman"))));
 
-	r = table->Select();
-	entries = (vector<TableRow *> *)r.data;
+	Output(table);
 
-	SerializedObject object = table->columns->data()[0].Serialize();
-	bool result = table->columns->data()[0].Deserialize(object);
+	manager->DropDatabase(TEXT("My test database #3"));
 
-	for (const auto &row : table->rows)
+	delete manager;
+}
+
+void Test4()
+{
+	cout << endl << TEXT("Test #4") << endl;
+
+	manager = new Manager(TEXT("Test manager #4"));
+	r = manager->CreateDatabase(TEXT("My test database #4"));
+	db = (Database *)r.data;
+	r = db->CreateTable(TEXT("Persons"), &columns);
+	table = (Table *)r.data;
+
+	for (int i = 0; i < (int)testRows.size(); i++)
 	{
-		SerializedObject obj = row->Serialize();
-		TableRow tableRow = TableRow(table->columns, vector<Data>());
-		tableRow.Deserialize(obj);
+		testRows.data()[i]->columns = table->columns;
+		r = table->Insert(testRows.data()[i]);
 	}
 
-	SerializedObject serializedTable = table->Serialize();
-	result = table->Deserialize(serializedTable);
+	Output(table);
 
-	SerializedObject serializedDatabse = db->Serialize();
-	result = db->Deserialize(serializedDatabse);
+	r = db->SaveToFile(String(TEXT("db.BIN")));
 
-	cout << endl << table->ToString() << endl;
+	table->Delete(nullptr);
+
+	Output(table);
+
+	r = db->LoadFromFile(String(TEXT("db.BIN")));
+	r = db->FindTable(TEXT("Persons"));
+	table = (Table *)r.data;
+
+	Output(table);
+
+	manager->DropDatabase(TEXT("My test database #4"));
+
+	delete manager;
+}
+
+void Output(Manager *manager)
+{
+	cout << manager->ToString() << endl << endl;
+}
+
+void Output(Database *database)
+{
+	cout << database->ToString() << endl << endl;
+}
+
+void Output(Table *table)
+{
+	cout << table->ToString() << endl << endl;
+	Response r = table->Select(nullptr);
+	vector<TableRow *> *entries = (vector<TableRow *> *)r.data;
 
 	if (entries->size() != 0)
 	{
 		for (int i = 0; i < (int)entries->size(); i++)
 		{
-			cout << entries->data()[i]->ToString() << endl;
+			Output(entries->data()[i]);
 		}
 	}
 	else
@@ -173,5 +250,10 @@ void Test()
 		cout << TEXT("No entries!") << endl;
 	}
 
-	manager->DropDatabase(TEXT("My test database #1"));
+	cout << endl;
+}
+
+void Output(TableRow *row)
+{
+	cout << row->ToString() << endl;
 }

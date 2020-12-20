@@ -12,12 +12,12 @@
 #include <filesystem>
 
 #include "Types.hpp"
+#include "Data.hpp"
 
 using namespace std;
 using namespace std::filesystem;
 
-char *ReadFromFile(String name);
-void WriteToFile(String name, char *rows);
-vector<directory_entry> EnumerateFiles(String directory);
+vector<byte> *ReadFromFile(String name);
+void WriteToFile(String name, vector<byte> *data);
 
 #endif // __IO_HPP__

@@ -45,6 +45,51 @@ Response Database::DropTable(String name)
 	return Response(ErrorCode::NOT_FOUND);
 }
 
+Response Database::FindTable(String name)
+{
+	Table *table = FindTableByName(name);
+
+	if (table != nullptr)
+	{
+		return Response(ErrorCode::OK, table);
+	}
+
+	return Response(ErrorCode::NOT_FOUND);
+}
+
+Response Database::SaveToFile(String fileName)
+{
+	SerializedObject object = this->Serialize();
+
+	vector<byte> *data = new vector<byte>((const unsigned int)object.length);
+	memcpy(data->data(), object.data, (size_t)object.length);
+	WriteToFile(fileName, data);
+	delete data;
+
+	return Response(ErrorCode::OK);
+}
+
+Response Database::LoadFromFile(String fileName)
+{
+	vector<byte> *data = ReadFromFile(fileName);
+
+	if (data != nullptr)
+	{
+		bool result = this->Deserialize(SerializedObject(ObjectType::DATABASE, data->size(), data->data()));
+
+		delete data;
+
+		if (!result)
+		{	
+			return Response(ErrorCode::SERIALIZATION_ERROR);
+		}
+
+		return Response(ErrorCode::OK);
+	}
+
+	return Response(ErrorCode::NOT_FOUND);
+}
+
 SerializedObject Database::Serialize()
 {
 	uint32_t nameLength = Strlen(this->name.c_str());
@@ -129,6 +174,25 @@ bool Database::Deserialize(SerializedObject object)
 	}
 
 	return true;
+}
+
+String Database::ToString()
+{
+	String result = String(TEXT("Database: ")) + this->name + String(TEXT("\nTables: "));
+
+	if (this->tables != nullptr && this->tables->size() != 0)
+	{
+		for (const auto &iterator : *this->tables)
+		{
+			result += TEXT("\n") + iterator->name;
+		}
+	}
+	else
+	{
+		result += TEXT("no tables!");
+	}
+
+	return result;
 }
 
 Table *Database::FindTableByName(String name)

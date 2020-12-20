@@ -1,53 +1,26 @@
 #include "IO.hpp"
 
-/*char *ReadFile(string name)
-{
-	fstream file;
-	file.open(name, ios::in);
-
-	if (file.is_open())
-	{
-		int length = 1024;
-		char *buffer = new char[length];
-		file.get((char *)buffer, length);
-		file.close();
-
-		return buffer;
-	}
-
-	return nullptr;
-}*/
-
-char *ReadFromFile(String name)
+vector<byte> *ReadFromFile(String name)
 {
 	ifstream file(name, ios::binary | ios::ate);
 	streamsize size = file.tellg();
 	file.seekg(0, ios::beg);
 
-	vector<char> buffer((unsigned int)size);
-	if (file.read(buffer.data(), size))
+	char *buffer = new char[(unsigned)size];
+	if (file.read(buffer, size))
 	{
-		return buffer.data();
+		vector<byte> *data = new vector<byte>((const unsigned int)size);
+		memcpy(data->data(), buffer, (size_t)size);
+
+		return data;
 	}
 
 	return nullptr;
 }
 
-void WriteToFile(String name, char *rows)
+void WriteToFile(String name, vector<byte> *data)
 {
 	ofstream file(name, ios::binary);
-	file.write(rows, 100);
+	file.write((const char *)data->data(), data->size());
 	file.close();
-}
-
-vector<directory_entry> EnumerateFiles(String directory)
-{
-	vector<directory_entry> result;
-
-	for (directory_entry p : directory_iterator(directory))
-	{
-		result.push_back(p);
-	}
-
-	return result;
 }

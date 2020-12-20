@@ -4,12 +4,7 @@ Manager::Manager(String name)
 {
 	this->name = name;
 
-	cout << "Starting KDBMS..." << endl;
-}
-
-Manager::~Manager()
-{
-	databases.clear();
+	cout << TEXT("Starting KDBMS...") << endl;
 }
 
 Response Manager::CreateDatabase(String name)
@@ -91,21 +86,23 @@ Response Manager::DropDatabase(Database *database)
 	}
 }
 
-void Manager::EnableLoggning(bool logging)
+String Manager::ToString()
 {
-	this->logging = logging;
+	String result = String(TEXT("KDBMS: ")) + this->name + String(TEXT("\nDatabase: "));
 
-	cout << (logging ? TEXT("Logging enabled") : TEXT("Logging disabled")) << endl;
-}
+	if (this->databases.size() != 0)
+	{
+		for (const auto &iterator : this->databases)
+		{
+			result += TEXT("\n") + iterator->name;
+		}
+	}
+	else
+	{
+		result += TEXT("no databases!");
+	}
 
-SerializedObject Manager::Serialize()
-{
-	return SerializedObject();
-}
-
-bool Manager::Deserialize(SerializedObject object)
-{
-	return false;
+	return result;
 }
 
 Database *Manager::FindDatabaseByName(String name)

@@ -109,12 +109,19 @@ Response Table::Delete(Condition *condition)
 {
 	if (condition != nullptr)
 	{
+		vector<TableRow *> toDelete;
+
 		for (const auto &iterator : this->rows)
 		{
 			if (condition->Check(iterator->fields))
 			{
-				DeleteRow(iterator);
+				toDelete.push_back(iterator);
 			}
+		}
+		
+		for (int i = 0; i < (int)toDelete.size(); i++)
+		{
+			DeleteRow(toDelete.data()[i]);
 		}
 
 		return Response(ErrorCode::OK);

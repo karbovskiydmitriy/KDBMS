@@ -13,19 +13,22 @@
 #include <filesystem>
 #include <iostream>
 
-#include "KDBMS.hpp"
+#include "Attributes.hpp"
+#include "Comparison.hpp"
+#include "Condition.hpp"
+#include "Data.hpp"
 #include "Database.hpp"
+#include "ErrorCode.hpp"
 #include "IO.hpp"
-#include "Serializeable.hpp"
+#include "KDBMS.hpp"
 #include "Printable.hpp"
 #include "Response.hpp"
+#include "Serializeable.hpp"
 #include "SerializedObject.hpp"
 #include "Table.hpp"
 #include "TableColumn.hpp"
 #include "TableRow.hpp"
-#include "Attributes.hpp"
-#include "Condition.hpp"
-#include "Comparison.hpp"
+#include "Types.hpp"
 
 using namespace std;
 using namespace std::filesystem;

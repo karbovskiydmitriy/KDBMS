@@ -14,7 +14,7 @@ bool Condition::Check(vector<Data> row)
 {
 	bool result = false;
 
-	if (index == -1)
+	if (this->index == -1)
 	{
 		return false;
 	}
@@ -43,9 +43,11 @@ bool Condition::Check(vector<Data> row)
 		case Type::ULONG:
 		case Type::FLOAT:
 		case Type::DOUBLE:
-			return rowData.value == this->data.value;
+			result = rowData.value == this->data.value;
+			break;
 		case Type::STRING:
-			return ((String *)rowData.pointer) == ((String *)this->data.pointer);
+			result = ((String *)rowData.pointer) == ((String *)this->data.pointer);
+			break;
 		case Type::BLOB:
 		{
 			Blob *b1 = ((Blob *)rowData.pointer);
@@ -54,15 +56,19 @@ bool Condition::Check(vector<Data> row)
 			{
 				if (memcmp(b1->data(), b2->data(), b1->size()) == 0)
 				{
-					return true;
+					result = true;
+					break;
 				}
 			}
 
-			return false;
+			result = false;
+			break;
 		}
 		default:
-			return false;
+			result = false;
+			break;
 		}
+		break;
 	case Comparison::NOT_EQUALS:
 		switch (this->type)
 		{
@@ -78,9 +84,11 @@ bool Condition::Check(vector<Data> row)
 		case Type::ULONG:
 		case Type::FLOAT:
 		case Type::DOUBLE:
-			return rowData.value != this->data.value;
+			result = rowData.value != this->data.value;
+			break;
 		case Type::STRING:
-			return ((String *)rowData.pointer) != ((String *)this->data.pointer);
+			result = ((String *)rowData.pointer) != ((String *)this->data.pointer);
+			break;
 		case Type::BLOB:
 		{
 			Blob *b1 = ((Blob *)rowData.pointer);
@@ -89,19 +97,24 @@ bool Condition::Check(vector<Data> row)
 			{
 				if (memcmp(b1->data(), b2->data(), b1->size()) != 0)
 				{
-					return true;
+					result = true;
+					break;
 				}
 			}
 			else
 			{
-				return true;
+				result = true;
+				break;
 			}
 
-			return false;
+			result = false;
+			break;
 		}
 		default:
-			return false;
+			result = false;
+			break;
 		}
+		break;
 	case Comparison::LESS_THAN:
 		switch (this->type)
 		{
@@ -109,20 +122,26 @@ bool Condition::Check(vector<Data> row)
 		case Type::BYTE:
 		case Type::SHORT:
 		case Type::INT:
-			return (signed long long int)rowData.value < (signed long long int)this->data.value;
+			result = (signed long long int)rowData.value < (signed long long int)this->data.value;
+			break;
 		case Type::CHAR:
 		case Type::UBYTE:
 		case Type::USHORT:
 		case Type::UINT:
 		case Type::ULONG:
-			return (unsigned long long int)rowData.value < (unsigned long long int)this->data.value;
+			result = (unsigned long long int)rowData.value < (unsigned long long int)this->data.value;
+			break;
 		case Type::FLOAT:
-			return rowData.singlePrecisionFloating < this->data.singlePrecisionFloating;
+			result = rowData.singlePrecisionFloating < this->data.singlePrecisionFloating;
+			break;
 		case Type::DOUBLE:
-			return rowData.doublePrecisionFloating < this->data.doublePrecisionFloating;
+			result = rowData.doublePrecisionFloating < this->data.doublePrecisionFloating;
+			break;
 		default:
-			return false;
+			result = false;
+			break;
 		}
+		break;
 	case Comparison::LESS_OR_EQUALS_THAN:
 		switch (this->type)
 		{
@@ -130,20 +149,26 @@ bool Condition::Check(vector<Data> row)
 		case Type::BYTE:
 		case Type::SHORT:
 		case Type::INT:
-			return (signed long long int)rowData.value <= (signed long long int)this->data.value;
+			result = (signed long long int)rowData.value <= (signed long long int)this->data.value;
+			break;
 		case Type::CHAR:
 		case Type::UBYTE:
 		case Type::USHORT:
 		case Type::UINT:
 		case Type::ULONG:
-			return (unsigned long long int)rowData.value <= (unsigned long long int)this->data.value;
+			result = (unsigned long long int)rowData.value <= (unsigned long long int)this->data.value;
+			break;
 		case Type::FLOAT:
-			return rowData.singlePrecisionFloating <= this->data.singlePrecisionFloating;
+			result = rowData.singlePrecisionFloating <= this->data.singlePrecisionFloating;
+			break;
 		case Type::DOUBLE:
-			return rowData.doublePrecisionFloating <= this->data.doublePrecisionFloating;
+			result = rowData.doublePrecisionFloating <= this->data.doublePrecisionFloating;
+			break;
 		default:
-			return false;
+			result = false;
+			break;
 		}
+		break;
 	case Comparison::GREATER_THAN:
 		switch (this->type)
 		{
@@ -151,20 +176,26 @@ bool Condition::Check(vector<Data> row)
 		case Type::BYTE:
 		case Type::SHORT:
 		case Type::INT:
-			return (signed long long int)rowData.value > (signed long long int)this->data.value;
+			result = (signed long long int)rowData.value > (signed long long int)this->data.value;
+			break;
 		case Type::CHAR:
 		case Type::UBYTE:
 		case Type::USHORT:
 		case Type::UINT:
 		case Type::ULONG:
-			return (unsigned long long int)rowData.value > (unsigned long long int)this->data.value;
+			result = (unsigned long long int)rowData.value > (unsigned long long int)this->data.value;
+			break;
 		case Type::FLOAT:
-			return rowData.singlePrecisionFloating > this->data.singlePrecisionFloating;
+			result = rowData.singlePrecisionFloating > this->data.singlePrecisionFloating;
+			break;
 		case Type::DOUBLE:
-			return rowData.doublePrecisionFloating > this->data.doublePrecisionFloating;
+			result = rowData.doublePrecisionFloating > this->data.doublePrecisionFloating;
+			break;
 		default:
-			return false;
+			result = false;
+			break;
 		}
+		break;
 	case Comparison::GREATER_OR_EQUALS_THAN:
 		switch (this->type)
 		{
@@ -172,22 +203,29 @@ bool Condition::Check(vector<Data> row)
 		case Type::BYTE:
 		case Type::SHORT:
 		case Type::INT:
-			return (signed long long int)rowData.value >= (signed long long int)this->data.value;
+			result = (signed long long int)rowData.value >= (signed long long int)this->data.value;
+			break;
 		case Type::CHAR:
 		case Type::UBYTE:
 		case Type::USHORT:
 		case Type::UINT:
 		case Type::ULONG:
-			return (unsigned long long int)rowData.value >= (unsigned long long int)this->data.value;
+			result = (unsigned long long int)rowData.value >= (unsigned long long int)this->data.value;
+			break;
 		case Type::FLOAT:
-			return rowData.singlePrecisionFloating >= this->data.singlePrecisionFloating;
+			result = rowData.singlePrecisionFloating >= this->data.singlePrecisionFloating;
+			break;
 		case Type::DOUBLE:
-			return rowData.doublePrecisionFloating >= this->data.doublePrecisionFloating;
+			result = rowData.doublePrecisionFloating >= this->data.doublePrecisionFloating;
+			break;
 		default:
-			return false;
+			result = false;
+			break;
 		}
+		break;
 	default:
-		return false;
+		result = false;
+		break;
 	}
 
 	if (!result)
@@ -196,7 +234,7 @@ bool Condition::Check(vector<Data> row)
 		{
 			result = this->orCondition->Check(row);
 
-			if (result)
+			if (result && this->andCondition == nullptr)
 			{
 				return true;
 			}
